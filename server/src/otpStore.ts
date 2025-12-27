@@ -7,8 +7,8 @@ export type OtpRecord = {
 };
 
 export interface OtpStore {
-  issue(phoneE164: string, code: string, ttlMs: number): string;
-  verify(phoneE164: string, code: string, maxAttempts: number): boolean;
+  issue(phoneE164: string, code: string, ttlMs: number): Promise<string> | string;
+  verify(phoneE164: string, code: string, maxAttempts: number): Promise<boolean> | boolean;
 }
 
 // Simple in-memory store for development. Swap to Redis in production.

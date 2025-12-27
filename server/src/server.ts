@@ -1,11 +1,26 @@
 import Fastify from 'fastify';
 import cors from '@fastify/cors';
+import jwt from 'jsonwebtoken';
 import { config } from './config.js';
 import { InMemoryOtpStore } from './otpStore.js';
+import { PgOtpStore } from './pgOtpStore.js';
 import { requestOtpSchema, verifyOtpSchema } from './schema.js';
 import { makeTwilioClient, sendOtpSms } from './twilioClient.js';
+import { getPool, runMigrations } from './db.js';
 
-const otpStore = new InMemoryOtpStore();
+let otpStore: InMemoryOtpStore | PgOtpStore;
+const useDb = !!process.env.DATABASE_URL;
+if (useDb) {
+  const pool = getPool();
+  otpStore = new PgOtpStore(pool);
+  runMigrations().catch((err) => {
+    console.error('Migration failed', err);
+    process.exit(1);
+  });
+} else {
+  otpStore = new InMemoryOtpStore();
+}
+
 const twilioClient = config.twilio.accountSid ? makeTwilioClient() : null;
 
 const fastify = Fastify({ logger: true });
@@ -18,7 +33,7 @@ fastify.post('/auth/request-otp', async (request, reply) => {
   }
   const { phone } = parsed.data;
   const code = Math.floor(100000 + Math.random() * 900000).toString();
-  otpStore.issue(phone, code, config.otp.ttlMs);
+  await Promise.resolve(otpStore.issue(phone, code, config.otp.ttlMs));
 
   if (!twilioClient) {
     request.log.warn('Twilio not configured; logging OTP instead');
@@ -41,12 +56,18 @@ fastify.post('/auth/verify-otp', async (request, reply) => {
     return reply.code(400).send({ error: parsed.error.format() });
   }
   const { phone, code } = parsed.data;
-  const ok = otpStore.verify(phone, code, config.otp.maxAttempts);
+  const ok = await Promise.resolve(otpStore.verify(phone, code, config.otp.maxAttempts));
   if (!ok) {
     return reply.code(401).send({ error: 'Invalid or expired code' });
   }
-  // TODO: create or fetch user, issue session/JWT, map phone->address.
-  return reply.send({ ok: true, phone });
+  let userId: number | null = null;
+  if (useDb) {
+    const pool = getPool();
+    const res = await pool.query('INSERT INTO users (phone_e164) VALUES ($1) ON CONFLICT (phone_e164) DO UPDATE SET phone_e164 = EXCLUDED.phone_e164 RETURNING id', [phone]);
+    userId = res.rows[0]?.id ?? null;
+  }
+  const token = jwt.sign({ sub: phone, uid: userId ?? undefined }, config.jwtSecret, { expiresIn: '30d' });
+  return reply.send({ ok: true, phone, token });
 });
 
 const start = async () => {
