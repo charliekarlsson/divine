@@ -1,0 +1,24 @@
+{
+  "name": "dash-wallet-api",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "build": "tsc -p .",
+    "start": "node dist/server.js"
+  },
+  "dependencies": {
+    "@fastify/cors": "^8.3.0",
+    "dotenv": "^16.3.1",
+    "fastify": "^4.26.2",
+    "nanoid": "^4.0.2",
+    "twilio": "^4.21.2",
+    "zod": "^3.22.2"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "tsx": "^4.7.0",
+    "typescript": "^5.3.3"
+  }
+}
