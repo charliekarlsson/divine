@@ -1022,14 +1022,25 @@
       if (window.__solanaMods) return window.__solanaMods;
       const solanaPromise = import('https://cdn.jsdelivr.net/npm/@solana/web3.js@1.98.4/lib/index.browser.esm.js');
       let bs58mod;
-      try {
-        bs58mod = await import('https://esm.sh/bs58@6.0.0?bundle');
-      } catch (err) {
-        console.warn('Primary bs58 import failed, trying jsdelivr', err);
-        bs58mod = await import('https://cdn.jsdelivr.net/npm/bs58@6.0.0/dist/bs58.mjs');
+      const bs58Sources = [
+        'https://cdn.jsdelivr.net/npm/bs58@6.0.0/+esm',
+        'https://cdn.jsdelivr.net/npm/bs58@6.0.0/dist/bs58.mjs',
+        'https://cdn.skypack.dev/bs58'
+      ];
+      let lastErr;
+      for (const src of bs58Sources) {
+        try {
+          bs58mod = await import(src);
+          break;
+        } catch (err) {
+          lastErr = err;
+          console.warn('bs58 import failed from', src, err);
+        }
       }
+      if (!bs58mod) throw lastErr || new Error('Failed to load bs58');
       const { Keypair, Transaction, PublicKey, Connection, clusterApiUrl } = await solanaPromise;
-      window.__solanaMods = { Keypair, Transaction, PublicKey, Connection, clusterApiUrl, bs58: bs58mod.default };
+      const bs58 = bs58mod.default || bs58mod.bs58 || bs58mod;
+      window.__solanaMods = { Keypair, Transaction, PublicKey, Connection, clusterApiUrl, bs58 };
       return window.__solanaMods;
     };
 
