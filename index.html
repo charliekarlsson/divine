@@ -430,36 +430,91 @@
           <button class="pill pill-ghost" id="mode-login" data-mode="login">Login</button>
           <button class="pill" id="mode-password" data-mode="password">Password login</button>
         </div>
-        <div class="wallet-form" id="wallet-form">
-          <div class="wallet-form-title" id="form-title">Login with phone</div>
-          <label>Phone
-            <input id="w-phone" placeholder="+1234567890" />
-          </label>
-          <div class="inline-row">
-            <button class="pill" id="btn-request-otp">Get code</button>
-            <input id="w-otp" placeholder="6-digit code" style="max-width:140px" />
-            <button class="pill pill-solid" id="wallet-submit">Verify</button>
+        <div class="wallet-section" id="auth-landing">
+          <div class="section-heading" style="justify-content:center; text-align:center; gap:12px;">
+            <img class="wallet-logo" src="divinelogo.png" alt="Divine logo" style="margin:0 auto;" />
           </div>
-        </div>
-        <div class="wallet-status" id="wallet-status">Select an option to continue.</div>
+          <div class="wallet-actions" style="justify-items:center;">
+            <button class="pill pill-solid" id="btn-auth-signup">Sign up</button>
+            <button class="pill" id="btn-auth-login">Log in</button>
+          </div>
         </div>
 
-        <div class="wallet-section" id="password-section" style="display:none;">
-          <div class="section-heading">
-            <div class="section-title">Alternative login</div>
+        <div class="wallet-section" id="auth-signup-choice" style="display:none;">
+          <div class="section-heading" style="justify-content:space-between;">
+            <div class="section-title">Choose sign up method</div>
+            <button class="mini-btn" id="btn-back-to-landing">Back</button>
           </div>
-          <div class="wallet-form" id="password-form">
+          <div class="wallet-actions">
+            <button class="pill pill-solid" id="btn-signup-phone">Register with phone <span title="Phone verification currently unavailable in USA/CA" aria-label="info" style="margin-left:6px; cursor:help;">?</span></button>
+            <button class="pill" id="btn-signup-username">Register with username</button>
+          </div>
+        </div>
+
+        <div class="wallet-section" id="auth-signup-phone" style="display:none;">
+          <div class="section-heading" style="justify-content:space-between;">
+            <div class="section-title">Sign up with phone</div>
+            <button class="mini-btn" id="btn-back-to-signup">Back</button>
+          </div>
+          <div class="wallet-form" id="wallet-form">
             <label>Phone
-              <input id="pw-phone" placeholder="+1234567890" />
-            </label>
-            <label>Password
-              <input id="pw-password" type="password" placeholder="Enter password" />
+              <input id="w-phone" placeholder="+1234567890" />
             </label>
             <div class="inline-row">
-              <button class="pill pill-solid" id="btn-password-login">Login</button>
-              <button class="pill" id="btn-password-register">Set password</button>
+              <button class="pill" id="btn-request-otp">Get code</button>
+              <input id="w-otp" placeholder="6-digit code" style="max-width:140px" />
+              <button class="pill pill-solid" id="wallet-submit">Verify</button>
             </div>
-            <div class="wallet-status" id="password-status"></div>
+            <div class="wallet-status" id="wallet-status">Enter phone then request & verify code.</div>
+          </div>
+        </div>
+
+        <div class="wallet-section" id="auth-signup-username" style="display:none;">
+          <div class="section-heading" style="justify-content:space-between;">
+            <div class="section-title">Sign up with username</div>
+            <button class="mini-btn" id="btn-back-to-signup-2">Back</button>
+          </div>
+          <div class="wallet-form" id="username-signup-form">
+            <label>Username
+              <input id="su-username" placeholder="username" />
+            </label>
+            <label>Password
+              <input id="su-password" type="password" placeholder="Enter password" />
+            </label>
+            <button class="pill pill-solid" id="btn-username-register">Create account</button>
+            <div class="wallet-status" id="username-signup-status"></div>
+          </div>
+        </div>
+
+        <div class="wallet-section" id="auth-login" style="display:none;">
+          <div class="section-heading" style="justify-content:space-between;">
+            <div class="section-title">Login</div>
+            <button class="mini-btn" id="btn-back-to-landing-2">Back</button>
+          </div>
+          <div class="wallet-actions">
+            <button class="pill pill-solid" id="btn-login-otp">Login with phone</button>
+            <button class="pill" id="btn-login-username">Login with username</button>
+          </div>
+          <div class="wallet-form" id="login-otp-form">
+            <label>Phone
+              <input id="lo-phone" placeholder="+1234567890" />
+            </label>
+            <div class="inline-row">
+              <button class="pill" id="lo-request-otp">Get code</button>
+              <input id="lo-otp" placeholder="6-digit code" style="max-width:140px" />
+              <button class="pill pill-solid" id="lo-submit">Verify</button>
+            </div>
+            <div class="wallet-status" id="login-otp-status">Request and verify OTP to login.</div>
+          </div>
+          <div class="wallet-form" id="login-username-form" style="display:none;">
+            <label>Username
+              <input id="lu-username" placeholder="username" />
+            </label>
+            <label>Password
+              <input id="lu-password" type="password" placeholder="Password" />
+            </label>
+            <button class="pill pill-solid" id="btn-login-username-submit">Login</button>
+            <div class="wallet-status" id="login-username-status"></div>
           </div>
         </div>
       </div>
@@ -631,22 +686,42 @@
     // Popup wallet logic
     const panel = document.getElementById('wallet-panel');
     const openWalletBtn = document.getElementById('open-wallet');
-    const modeCreateBtn = document.getElementById('mode-create');
-    const modeLoginBtn = document.getElementById('mode-login');
-    const modePasswordBtn = document.getElementById('mode-password');
     const statusEl = document.getElementById('wallet-status');
     const form = document.getElementById('wallet-form');
-    const formTitle = document.getElementById('form-title');
     const submitBtn = document.getElementById('wallet-submit');
     const phoneInput = document.getElementById('w-phone');
     const otpInput = document.getElementById('w-otp');
-    const passwordSection = document.getElementById('password-section');
-    const pwPhone = document.getElementById('pw-phone');
-    const pwPassword = document.getElementById('pw-password');
-    const pwStatus = document.getElementById('password-status');
-    const pwLoginBtn = document.getElementById('btn-password-login');
-    const pwRegisterBtn = document.getElementById('btn-password-register');
     const requestOtpBtn = document.getElementById('btn-request-otp');
+    const authLanding = document.getElementById('auth-landing');
+    const authSignupChoice = document.getElementById('auth-signup-choice');
+    const authSignupPhone = document.getElementById('auth-signup-phone');
+    const authSignupUsername = document.getElementById('auth-signup-username');
+    const authLogin = document.getElementById('auth-login');
+    const btnAuthSignup = document.getElementById('btn-auth-signup');
+    const btnAuthLogin = document.getElementById('btn-auth-login');
+    const btnSignupPhone = document.getElementById('btn-signup-phone');
+    const btnSignupUsername = document.getElementById('btn-signup-username');
+    const btnBackToLanding = document.getElementById('btn-back-to-landing');
+    const btnBackToLanding2 = document.getElementById('btn-back-to-landing-2');
+    const btnBackToSignup = document.getElementById('btn-back-to-signup');
+    const btnBackToSignup2 = document.getElementById('btn-back-to-signup-2');
+    const btnLoginOtp = document.getElementById('btn-login-otp');
+    const btnLoginUsername = document.getElementById('btn-login-username');
+    const loginOtpForm = document.getElementById('login-otp-form');
+    const loginUsernameForm = document.getElementById('login-username-form');
+    const loPhone = document.getElementById('lo-phone');
+    const loOtp = document.getElementById('lo-otp');
+    const loRequestOtp = document.getElementById('lo-request-otp');
+    const loSubmit = document.getElementById('lo-submit');
+    const loginOtpStatus = document.getElementById('login-otp-status');
+    const luUsername = document.getElementById('lu-username');
+    const luPassword = document.getElementById('lu-password');
+    const btnLoginUsernameSubmit = document.getElementById('btn-login-username-submit');
+    const loginUsernameStatus = document.getElementById('login-username-status');
+    const suUsername = document.getElementById('su-username');
+    const suPassword = document.getElementById('su-password');
+    const btnUsernameRegister = document.getElementById('btn-username-register');
+    const usernameSignupStatus = document.getElementById('username-signup-status');
     const dragHandle = document.getElementById('wallet-drag');
     const walletAuthView = document.getElementById('wallet-auth');
     const walletAppView = document.getElementById('wallet-app');
@@ -689,7 +764,6 @@
     const STORAGE_KEY = 'divine_wallet_v1';
     const TOKEN_KEY = 'divine_token';
 
-    let mode = 'create';
     let authenticated = false;
     let state = loadState();
 
@@ -849,30 +923,46 @@
       startResize(e);
     });
 
-    const setMode = (next) => {
-      mode = next;
-      modeCreateBtn?.classList.toggle('active', next === 'create');
-      modeLoginBtn?.classList.toggle('active', next === 'login');
-      modePasswordBtn?.classList.toggle('active', next === 'password');
-      const isPassword = next === 'password';
-      if (passwordSection) passwordSection.style.display = isPassword ? 'block' : 'none';
-      if (form) form.style.display = isPassword ? 'none' : 'grid';
-      if (next === 'create') {
-        if (formTitle) formTitle.textContent = 'Sign up with phone';
-        if (submitBtn) submitBtn.textContent = 'Create account';
-        if (statusEl) setStatus(statusEl, 'Enter phone then request & verify code.');
-      } else if (next === 'login') {
-        if (formTitle) formTitle.textContent = 'Login with phone';
-        if (submitBtn) submitBtn.textContent = 'Verify';
-        if (statusEl) setStatus(statusEl, 'Request and verify OTP to login.');
-      } else {
-        if (statusEl) setStatus(statusEl, 'Use password form below.', '');
+    const authSections = [authLanding, authSignupChoice, authSignupPhone, authSignupUsername, authLogin];
+
+    const showAuthStage = (stage) => {
+      authSections.forEach((el) => el && (el.style.display = 'none'));
+      switch (stage) {
+        case 'signup-choice':
+          authSignupChoice.style.display = 'grid';
+          break;
+        case 'signup-phone':
+          authSignupPhone.style.display = 'grid';
+          break;
+        case 'signup-username':
+          authSignupUsername.style.display = 'grid';
+          break;
+        case 'login':
+          authLogin.style.display = 'grid';
+          toggleLoginMode('otp');
+          break;
+        default:
+          authLanding.style.display = 'grid';
       }
     };
 
-    modeCreateBtn?.addEventListener('click', () => setMode('create'));
-    modeLoginBtn?.addEventListener('click', () => setMode('login'));
-    modePasswordBtn?.addEventListener('click', () => setMode('password'));
+    const toggleLoginMode = (mode) => {
+      if (loginOtpForm) loginOtpForm.style.display = mode === 'otp' ? 'grid' : 'none';
+      if (loginUsernameForm) loginUsernameForm.style.display = mode === 'username' ? 'grid' : 'none';
+      btnLoginOtp?.classList.toggle('pill-solid', mode === 'otp');
+      btnLoginUsername?.classList.toggle('pill-solid', mode === 'username');
+    };
+
+    btnAuthSignup?.addEventListener('click', () => showAuthStage('signup-choice'));
+    btnAuthLogin?.addEventListener('click', () => showAuthStage('login'));
+    btnSignupPhone?.addEventListener('click', () => showAuthStage('signup-phone'));
+    btnSignupUsername?.addEventListener('click', () => showAuthStage('signup-username'));
+    btnBackToLanding?.addEventListener('click', () => showAuthStage('landing'));
+    btnBackToLanding2?.addEventListener('click', () => showAuthStage('landing'));
+    btnBackToSignup?.addEventListener('click', () => showAuthStage('signup-choice'));
+    btnBackToSignup2?.addEventListener('click', () => showAuthStage('signup-choice'));
+    btnLoginOtp?.addEventListener('click', () => toggleLoginMode('otp'));
+    btnLoginUsername?.addEventListener('click', () => toggleLoginMode('username'));
 
     const loadAddresses = async () => {
       try {
@@ -906,13 +996,17 @@
     openWalletBtn?.addEventListener('click', async (e) => {
       e.preventDefault();
       showPanel(true);
-      setMode('login');
+      showAuthStage('landing');
       await ensureAuthenticatedView();
-      if (statusEl) setStatus(statusEl, authenticated ? 'Session restored.' : 'Request and verify OTP to continue.');
+      if (statusEl) setStatus(statusEl, authenticated ? 'Session restored.' : 'Choose sign up or log in.');
       phoneInput.value = '';
       otpInput.value = '';
-      if (pwPhone) pwPhone.value = '';
-      if (pwPassword) pwPassword.value = '';
+      if (loPhone) loPhone.value = '';
+      if (loOtp) loOtp.value = '';
+      if (suUsername) suUsername.value = '';
+      if (suPassword) suPassword.value = '';
+      if (luUsername) luUsername.value = '';
+      if (luPassword) luPassword.value = '';
     });
 
     document.addEventListener('click', (e) => {
@@ -973,37 +1067,55 @@
       }
     };
 
+    const requestOtp = async (phone, statusTarget) => {
+      if (!phone) return setStatus(statusTarget, 'Enter phone first.', 'error');
+      setStatus(statusTarget, 'Requesting OTP...');
+      await api('/auth/request-otp', { method: 'POST', body: JSON.stringify({ phone }) });
+      setStatus(statusTarget, 'OTP sent. Check your phone.', 'success');
+    };
+
+    const verifyOtpAndLogin = async (phone, code, statusTarget) => {
+      if (!phone || !code) return setStatus(statusTarget, 'Phone and OTP are required.', 'error');
+      setStatus(statusTarget, 'Verifying...');
+      const data = await api('/auth/verify-otp', { method: 'POST', body: JSON.stringify({ phone, code }) });
+      localStorage.setItem(TOKEN_KEY, data.token);
+      authenticated = true;
+      await loadAddresses();
+      setStatus(statusTarget, 'Verified. Token saved.', 'success');
+      toggleView('app');
+      renderWallet();
+    };
+
     requestOtpBtn?.addEventListener('click', async () => {
-      const phone = phoneInput?.value.trim();
-      if (!phone) return setStatus(statusEl, 'Enter phone first.', 'error');
       try {
-        setStatus(statusEl, 'Requesting OTP...');
-        await api('/auth/request-otp', { method: 'POST', body: JSON.stringify({ phone }) });
-        setStatus(statusEl, 'OTP sent. Check your phone.', 'success');
+        await requestOtp(phoneInput?.value.trim(), statusEl);
       } catch (err) {
         setStatus(statusEl, 'OTP failed: ' + err.message, 'error');
       }
     });
 
+    loRequestOtp?.addEventListener('click', async () => {
+      try {
+        await requestOtp(loPhone?.value.trim(), loginOtpStatus);
+      } catch (err) {
+        setStatus(loginOtpStatus, 'OTP failed: ' + err.message, 'error');
+      }
+    });
+
     submitBtn?.addEventListener('click', async (e) => {
       e.preventDefault();
-      const phone = phoneInput?.value.trim();
-      const code = otpInput?.value.trim();
-      if (!phone || !code) {
-        setStatus(statusEl, 'Phone and OTP are required.', 'error');
-        return;
-      }
       try {
-        setStatus(statusEl, 'Verifying...');
-        const data = await api('/auth/verify-otp', { method: 'POST', body: JSON.stringify({ phone, code }) });
-        localStorage.setItem(TOKEN_KEY, data.token);
-        authenticated = true;
-        await loadAddresses();
-        setStatus(statusEl, 'Verified. Token saved.', 'success');
-        toggleView('app');
-        renderWallet();
+        await verifyOtpAndLogin(phoneInput?.value.trim(), otpInput?.value.trim(), statusEl);
       } catch (err) {
         setStatus(statusEl, 'Verify failed: ' + err.message, 'error');
+      }
+    });
+
+    loSubmit?.addEventListener('click', async () => {
+      try {
+        await verifyOtpAndLogin(loPhone?.value.trim(), loOtp?.value.trim(), loginOtpStatus);
+      } catch (err) {
+        setStatus(loginOtpStatus, 'Verify failed: ' + err.message, 'error');
       }
     });
 
@@ -1026,28 +1138,44 @@
       }
     });
 
-    const handlePasswordAuth = async (intent) => {
-      const phone = pwPhone?.value.trim();
-      const password = pwPassword?.value.trim();
-      if (!phone || !password) return setStatus(pwStatus, 'Phone and password required.', 'error');
+    const handleUsernameSignup = async () => {
+      const username = suUsername?.value.trim();
+      const password = suPassword?.value.trim();
+      if (!username || !password) return setStatus(usernameSignupStatus, 'Username and password required.', 'error');
       try {
-        setStatus(pwStatus, intent === 'login' ? 'Signing in...' : 'Saving password...');
-        const endpoint = intent === 'login' ? '/auth/login-password' : '/auth/register-password';
-        const data = await api(endpoint, { method: 'POST', body: JSON.stringify({ phone, password }) });
+        setStatus(usernameSignupStatus, 'Creating account...');
+        const data = await api('/auth/register-username', { method: 'POST', body: JSON.stringify({ username, password }) });
         localStorage.setItem(TOKEN_KEY, data.token);
         authenticated = true;
         await loadAddresses();
-        setStatus(pwStatus, intent === 'login' ? 'Logged in with password.' : 'Password set and logged in.', 'success');
+        setStatus(usernameSignupStatus, 'Account created. Logged in.', 'success');
         toggleView('app');
         renderWallet();
-        showPanel(true);
       } catch (err) {
-        setStatus(pwStatus, (intent === 'login' ? 'Login failed: ' : 'Save failed: ') + err.message, 'error');
+        setStatus(usernameSignupStatus, 'Signup failed: ' + err.message, 'error');
       }
     };
 
-    pwLoginBtn?.addEventListener('click', () => handlePasswordAuth('login'));
-    pwRegisterBtn?.addEventListener('click', () => handlePasswordAuth('register'));
+    const handleUsernameLogin = async () => {
+      const username = luUsername?.value.trim();
+      const password = luPassword?.value.trim();
+      if (!username || !password) return setStatus(loginUsernameStatus, 'Username and password required.', 'error');
+      try {
+        setStatus(loginUsernameStatus, 'Signing in...');
+        const data = await api('/auth/login-username', { method: 'POST', body: JSON.stringify({ username, password }) });
+        localStorage.setItem(TOKEN_KEY, data.token);
+        authenticated = true;
+        await loadAddresses();
+        setStatus(loginUsernameStatus, 'Logged in.', 'success');
+        toggleView('app');
+        renderWallet();
+      } catch (err) {
+        setStatus(loginUsernameStatus, 'Login failed: ' + err.message, 'error');
+      }
+    };
+
+    btnUsernameRegister?.addEventListener('click', handleUsernameSignup);
+    btnLoginUsernameSubmit?.addEventListener('click', handleUsernameLogin);
 
     btnImport?.addEventListener('click', () => {
       if (importForm) importForm.style.display = 'grid';

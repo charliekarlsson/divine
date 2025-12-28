@@ -5,7 +5,7 @@ import { randomBytes, scryptSync, timingSafeEqual } from 'crypto';
 import { config } from './config.js';
 import { InMemoryOtpStore } from './otpStore.js';
 import { PgOtpStore } from './pgOtpStore.js';
-import { requestOtpSchema, verifyOtpSchema, addAddressSchema, prepareTransferSchema, submitTransferSchema, passwordAuthSchema } from './schema.js';
+import { requestOtpSchema, verifyOtpSchema, addAddressSchema, prepareTransferSchema, submitTransferSchema, passwordAuthSchema, usernamePasswordSchema } from './schema.js';
 import { makeTwilioClient, sendOtpSms } from './twilioClient.js';
 import { getPool, runMigrations } from './db.js';
 import { requireAuth } from './auth.js';
@@ -92,7 +92,7 @@ fastify.post('/auth/verify-otp', async (request, reply) => {
     const res = await pool.query('INSERT INTO users (phone_e164) VALUES ($1) ON CONFLICT (phone_e164) DO UPDATE SET phone_e164 = EXCLUDED.phone_e164 RETURNING id', [phone]);
     userId = res.rows[0]?.id ?? null;
   }
-  const token = jwt.sign({ sub: phone, uid: userId ?? undefined }, config.jwtSecret, { expiresIn: '30d' });
+  const token = jwt.sign({ sub: phone, phone, uid: userId ?? undefined }, config.jwtSecret, { expiresIn: '30d' });
   return reply.send({ ok: true, phone, token });
 });
 
@@ -113,7 +113,7 @@ fastify.post('/auth/register-password', async (request, reply) => {
     [phone, passwordHash]
   );
   const uid = res.rows[0]?.id ?? null;
-  const token = jwt.sign({ sub: phone, uid: uid ?? undefined }, config.jwtSecret, { expiresIn: '30d' });
+  const token = jwt.sign({ sub: phone, phone, uid: uid ?? undefined }, config.jwtSecret, { expiresIn: '30d' });
   return reply.send({ ok: true, phone, token });
 });
 
@@ -132,14 +132,55 @@ fastify.post('/auth/login-password', async (request, reply) => {
   }
   const ok = verifyPassword(password, row.password_hash);
   if (!ok) return reply.code(401).send({ error: 'Invalid credentials' });
-  const token = jwt.sign({ sub: phone, uid: row.id }, config.jwtSecret, { expiresIn: '30d' });
+  const token = jwt.sign({ sub: phone, phone, uid: row.id }, config.jwtSecret, { expiresIn: '30d' });
   return reply.send({ ok: true, phone, token });
+});
+
+fastify.post('/auth/register-username', async (request, reply) => {
+  if (!useDb) return reply.code(500).send({ error: 'Database required' });
+  const parsed = usernamePasswordSchema.safeParse(request.body);
+  if (!parsed.success) {
+    return reply.code(400).send({ error: parsed.error.format() });
+  }
+  const username = parsed.data.username.toLowerCase();
+  const passwordHash = hashPassword(parsed.data.password);
+  const pool = getPool();
+  const res = await pool.query(
+    `INSERT INTO users (username, password_hash)
+     VALUES ($1, $2)
+     ON CONFLICT (username) DO UPDATE SET password_hash = EXCLUDED.password_hash
+     RETURNING id`,
+    [username, passwordHash]
+  );
+  const uid = res.rows[0]?.id ?? null;
+  const token = jwt.sign({ sub: username, username, uid: uid ?? undefined }, config.jwtSecret, { expiresIn: '30d' });
+  return reply.send({ ok: true, username, token });
+});
+
+fastify.post('/auth/login-username', async (request, reply) => {
+  if (!useDb) return reply.code(500).send({ error: 'Database required' });
+  const parsed = usernamePasswordSchema.safeParse(request.body);
+  if (!parsed.success) {
+    return reply.code(400).send({ error: parsed.error.format() });
+  }
+  const username = parsed.data.username.toLowerCase();
+  const password = parsed.data.password;
+  const pool = getPool();
+  const res = await pool.query('SELECT id, password_hash FROM users WHERE username = $1', [username]);
+  const row = res.rows[0];
+  if (!row || !row.password_hash) {
+    return reply.code(401).send({ error: 'Password not set for this username' });
+  }
+  const ok = verifyPassword(password, row.password_hash);
+  if (!ok) return reply.code(401).send({ error: 'Invalid credentials' });
+  const token = jwt.sign({ sub: username, username, uid: row.id }, config.jwtSecret, { expiresIn: '30d' });
+  return reply.send({ ok: true, username, token });
 });
 
 fastify.get('/me', async (request, reply) => {
   const ctx = requireAuth(request, reply);
   if (!ctx) return;
-  return reply.send({ ok: true, phone: ctx.phone, uid: ctx.uid });
+  return reply.send({ ok: true, phone: ctx.phone, username: ctx.username, uid: ctx.uid });
 });
 
 fastify.post('/addresses', async (request, reply) => {
@@ -150,8 +191,7 @@ fastify.post('/addresses', async (request, reply) => {
   if (!parsed.success) return reply.code(400).send({ error: parsed.error.format() });
   const { address, isDefault } = parsed.data;
   const pool = getPool();
-  const userRes = await pool.query('SELECT id FROM users WHERE phone_e164 = $1', [ctx.phone]);
-  const uid = ctx.uid ?? userRes.rows[0]?.id;
+  const uid = ctx.uid;
   if (!uid) return reply.code(400).send({ error: 'User not found' });
   const client = await pool.connect();
   try {
@@ -180,7 +220,8 @@ fastify.get('/addresses', async (request, reply) => {
   if (!ctx) return;
   if (!useDb) return reply.code(500).send({ error: 'Database required' });
   const pool = getPool();
-  const res = await pool.query('SELECT address, is_default FROM addresses WHERE user_id = (SELECT id FROM users WHERE phone_e164 = $1)', [ctx.phone]);
+  if (!ctx.uid) return reply.code(400).send({ error: 'User not found' });
+  const res = await pool.query('SELECT address, is_default FROM addresses WHERE user_id = $1', [ctx.uid]);
   return reply.send({ ok: true, addresses: res.rows });
 });
 
@@ -194,8 +235,8 @@ fastify.post('/transfers/prepare', async (request, reply) => {
   const pool = getPool();
 
   // Resolve sender and receiver
-  const senderRes = await pool.query('SELECT id FROM users WHERE phone_e164 = $1', [ctx.phone]);
-  const senderId = senderRes.rows[0]?.id ?? null;
+  const senderId = ctx.uid ?? null;
+  if (!senderId) return reply.code(400).send({ error: 'User id missing' });
   const receiverRes = await pool.query('SELECT id FROM users WHERE phone_e164 = $1', [to_phone]);
   const receiverId = receiverRes.rows[0]?.id ?? null;
   let fromAddress: string | null = parsed.data.from_address ?? null;
@@ -271,10 +312,11 @@ fastify.post('/transfers/submit', async (request, reply) => {
   if (!parsed.success) return reply.code(400).send({ error: parsed.error.format() });
   const { transfer_id, signed_transaction_base64 } = parsed.data;
   const pool = getPool();
+  if (!ctx.uid) return reply.code(400).send({ error: 'User id missing' });
 
   const rowRes = await pool.query(
-    `SELECT id, status FROM transfers WHERE id = $1 AND from_user = (SELECT id FROM users WHERE phone_e164 = $2)`,
-    [transfer_id, ctx.phone]
+    `SELECT id, status FROM transfers WHERE id = $1 AND from_user = $2`,
+    [transfer_id, ctx.uid]
   );
   const transferRow = rowRes.rows[0];
   if (!transferRow) return reply.code(404).send({ error: 'Transfer not found for user' });

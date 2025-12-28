@@ -2,6 +2,8 @@ import { z } from 'zod';
 
 export const phoneSchema = z.string().regex(/^\+?[1-9]\d{6,14}$/i, 'Phone must be E.164');
 
+export const usernameSchema = z.string().min(3).max(32).regex(/^[a-zA-Z0-9._-]+$/, 'Username is alphanumeric with . _ -');
+
 export const requestOtpSchema = z.object({
   phone: phoneSchema
 });
@@ -13,6 +15,11 @@ export const verifyOtpSchema = z.object({
 
 export const passwordAuthSchema = z.object({
   phone: phoneSchema,
+  password: z.string().min(6).max(128)
+});
+
+export const usernamePasswordSchema = z.object({
+  username: usernameSchema,
   password: z.string().min(6).max(128)
 });
 
