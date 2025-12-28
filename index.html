@@ -310,16 +310,16 @@
       position: fixed;
       top: 70px;
       right: 24px;
-      width: 420px;
-      min-width: 320px;
-      max-width: 90vw;
-      max-height: 88vh;
+      width: 460px;
+      min-width: 340px;
+      max-width: 92vw;
+      max-height: 90vh;
       overflow: auto;
-      background: #0a0d1a;
+      background: #060814;
       border: 1px solid rgba(255,255,255,0.12);
-      border-radius: 16px;
-      box-shadow: 0 20px 50px rgba(0,0,0,0.45);
-      padding: 14px 16px 18px;
+      border-radius: 18px;
+      box-shadow: 0 26px 60px rgba(0,0,0,0.55);
+      padding: 16px 16px 20px;
       z-index: 30;
       transform: translateY(-12px) scale(0.97);
       opacity: 0;
@@ -334,15 +334,15 @@
       grid-template-columns: auto 1fr auto;
       align-items: center;
       gap: 10px;
-      padding: 4px 4px 8px;
+      padding: 4px 4px 10px;
     }
-    .wallet-logo { width: 86px; height: auto; display: block; }
+    .wallet-logo { width: 72px; height: auto; display: block; }
     .wallet-meta { display: grid; gap: 4px; }
-    .wallet-name { font-weight: 700; letter-spacing: 0.04em; }
-    .wallet-balance { font-weight: 700; color: #a8ffe7; font-size: 1.05rem; }
+    .wallet-name { font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; font-size: 0.95rem; }
+    .wallet-balance { font-weight: 700; color: #a8ffe7; font-size: 1.18rem; text-align: right; }
     .mini-btn {
       padding: 6px 10px;
-      border-radius: 8px;
+      border-radius: 10px;
       border: 1px solid rgba(255,255,255,0.16);
       background: rgba(255,255,255,0.06);
       color: #e8ecff;
@@ -355,7 +355,7 @@
     .wallet-actions { width: 100%; display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 8px; }
     .wallet-actions .pill { padding: 11px 14px; font-size: 0.95rem; }
     .wallet-view { display: none; }
-    .wallet-view.active { display: grid; gap: 10px; }
+    .wallet-view.active { display: grid; gap: 12px; }
     .wallet-status { font-size: 0.9rem; color: rgba(232,236,255,0.82); text-align: left; min-height: 18px; }
     .wallet-form { width: 100%; display: grid; grid-template-columns: 1fr; gap: 10px; }
     .wallet-form label { display: grid; gap: 6px; font-size: 0.9rem; color: rgba(232,236,255,0.86); }
@@ -415,6 +415,109 @@
     }
     .wallet-resize:hover { opacity: 0.9; }
     @keyframes walletPop { from { opacity: 0; transform: translateY(-14px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
+
+    /* Wallet app layout (Phantom-inspired) */
+    .wallet-app-shell { display: grid; gap: 12px; }
+    .wallet-card {
+      border: 1px solid rgba(255,255,255,0.09);
+      border-radius: 14px;
+      padding: 14px 14px 16px;
+      background: linear-gradient(140deg, rgba(255,255,255,0.02), rgba(255,255,255,0.06));
+    }
+    .wallet-grid { display: grid; gap: 12px; }
+    .wallet-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; align-items: center; }
+    .wallet-label { font-size: 0.75rem; letter-spacing: 0.08em; color: rgba(232,236,255,0.65); text-transform: uppercase; }
+    .wallet-value { font-weight: 700; font-size: 1rem; }
+    .wallet-address-box { display: grid; gap: 6px; }
+    .wallet-chip {
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 12px;
+      padding: 10px 12px;
+      background: rgba(255,255,255,0.04);
+    }
+    .wallet-balance-hero { text-align: center; display: grid; gap: 6px; padding: 8px 6px; }
+    .wallet-balance-hero .label { font-size: 0.9rem; letter-spacing: 0.08em; color: rgba(232,236,255,0.7); text-transform: uppercase; }
+    .wallet-balance-hero .value { font-size: 2.2rem; font-weight: 700; }
+    .pill-wide { width: 100%; justify-content: center; text-align: center; }
+    .token-list { display: grid; gap: 10px; }
+    .token-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 14px;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+      background: rgba(255,255,255,0.03);
+    }
+    .token-row h4 { margin: 0; font-size: 1rem; letter-spacing: 0.01em; }
+    .token-row .amount { font-weight: 700; }
+    .secret-box { display: grid; gap: 8px; }
+    .secret-field {
+      display: grid;
+      grid-template-columns: 1fr auto auto;
+      gap: 8px;
+      align-items: center;
+    }
+    .secret-input {
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.16);
+      background: rgba(255,255,255,0.06);
+      color: #e8ecff;
+      font-family: 'Space Grotesk', monospace;
+      font-size: 0.88rem;
+      width: 100%;
+    }
+    .empty-state {
+      text-align: center;
+      display: grid;
+      gap: 12px;
+      padding: 18px 12px;
+    }
+    .empty-title { font-weight: 700; font-size: 1.2rem; }
+    .empty-desc { color: rgba(232,236,255,0.8); font-size: 0.96rem; }
+
+    .settings-toggle {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(255,255,255,0.06);
+      color: #e8ecff;
+      cursor: pointer;
+      font-weight: 700;
+      transition: transform 120ms ease, background 120ms ease;
+    }
+    .settings-toggle:hover { transform: translateY(-1px); background: rgba(255,255,255,0.1); }
+
+    .settings-panel {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      width: min(420px, 92vw);
+      max-height: 80vh;
+      overflow: auto;
+      background: #080a16;
+      border: 1px solid rgba(255,255,255,0.14);
+      border-radius: 14px;
+      padding: 14px;
+      box-shadow: 0 18px 38px rgba(0,0,0,0.48);
+      display: none;
+      z-index: 40;
+    }
+    .settings-panel.active { display: grid; gap: 12px; }
+    .settings-header { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+    .settings-title { font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; }
+
+    .contacts-toggle {
+      position: fixed;
+      bottom: 16px;
+      left: 16px;
+      z-index: 35;
+    }
   </style>
 </head>
 <body>
@@ -521,80 +624,194 @@
       </div>
 
       <div class="wallet-view" id="wallet-app">
-        <div class="wallet-section">
-          <div class="section-heading">
-            <div class="section-title">Wallet actions</div>
-            <button class="mini-btn" id="btn-logout">Logout</button>
-          </div>
-          <div class="wallet-actions">
-            <button class="pill pill-solid" id="btn-generate-wallet">Generate new wallet</button>
-            <button class="pill" id="btn-import-wallet">Import existing wallet</button>
-          </div>
-          <div class="wallet-form" id="import-form" style="display:none;">
-            <label>Secret key (base58)
-              <input id="import-secret" placeholder="Paste secret key" />
-            </label>
-            <div class="inline-row">
-              <button class="pill pill-solid" id="import-submit">Import</button>
-              <button class="pill" id="import-cancel">Cancel</button>
+        <div class="wallet-app-shell">
+          <div class="wallet-card" id="wallet-empty">
+            <div class="empty-state">
+              <div class="empty-title">Create your wallet</div>
+              <div class="empty-desc">Generate or import a wallet to continue.</div>
+              <div class="wallet-actions">
+                <button class="pill pill-solid" id="btn-generate-wallet">Generate new wallet</button>
+                <button class="pill" id="btn-import-wallet">Import existing wallet</button>
+              </div>
+              <div class="wallet-form" id="import-form" style="display:none;">
+                <label>Secret key (base58)
+                  <input id="import-secret" placeholder="Paste secret key" />
+                </label>
+                <div class="inline-row">
+                  <button class="pill pill-solid" id="import-submit">Import</button>
+                  <button class="pill" id="import-cancel">Cancel</button>
+                </div>
+              </div>
             </div>
           </div>
+
+          <div class="wallet-card wallet-grid" id="wallet-dashboard" style="display:none;">
+            <div class="section-heading">
+              <div class="section-title">Wallet overview</div>
+              <div class="inline-row" style="justify-content:flex-end;">
+                <button class="settings-toggle" id="btn-settings" title="Settings">⚙</button>
+                <button class="mini-btn" id="btn-logout">Logout</button>
+              </div>
+            </div>
+            <div class="wallet-row">
+              <div class="wallet-address-box">
+                <div class="wallet-label">Wallet name</div>
+                <div class="inline-row">
+                  <div class="wallet-value" id="wallet-name-inline">Wallet</div>
+                  <button class="mini-btn" id="rename-wallet">Rename</button>
+                </div>
+              </div>
+              <div class="wallet-address-box">
+                <div class="wallet-label">Wallet address</div>
+                <div class="wallet-chip mono" id="current-address">No wallet yet.</div>
+                <div class="inline-row">
+                  <button class="mini-btn" id="btn-copy-address">Copy</button>
+                  <button class="mini-btn" id="btn-show-qr">QR</button>
+                  <button class="mini-btn" id="btn-refresh-balance">Refresh</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="wallet-balance-hero">
+              <div class="label">Solana balance</div>
+              <div class="value" id="wallet-balance">--.-- SOL</div>
+            </div>
+
+            <div class="wallet-row">
+              <button class="pill pill-solid pill-wide" id="btn-show-qr-hero">Receive / QR</button>
+              <button class="pill pill-wide" id="btn-send-shortcut">Send</button>
+            </div>
+
+            <div class="qr-box" id="qr-box" style="display:none;">
+              <img id="qr-img" alt="QR code" style="width:160px;height:160px;object-fit:contain;" />
+              <div class="status" id="qr-status"></div>
+            </div>
+          </div>
+
+          <div class="wallet-card" id="token-card" style="display:none;">
+            <div class="section-heading">
+              <div class="section-title">Tokens</div>
+              <div class="wallet-label">(demo)</div>
+            </div>
+            <div class="token-list">
+              <div class="token-row">
+                <h4>SOL</h4>
+                <div class="amount" id="token-sol">--.--</div>
+              </div>
+              <div class="token-row">
+                <h4>USDC</h4>
+                <div class="amount">0.00</div>
+              </div>
+              <div class="token-row">
+                <h4>TOKEN</h4>
+                <div class="amount">0.00</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="wallet-card" id="secret-card" style="display:none;">
+            <div class="section-heading">
+              <div class="section-title">Private key</div>
+              <div class="wallet-label">Base58 export</div>
+            </div>
+            <div class="secret-box">
+              <div class="wallet-label">Keep this safe. Anyone with it controls your funds.</div>
+              <div class="secret-field">
+                <input class="secret-input" id="secret-value" value="" readonly aria-label="Private key" />
+                <button class="mini-btn" id="btn-reveal-secret">Reveal</button>
+                <button class="mini-btn" id="btn-copy-secret">Copy</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="wallet-card" id="send-card" style="display:none;">
+            <div class="section-heading">
+              <div class="section-title">Send</div>
+              <div class="wallet-label">demo transfer</div>
+            </div>
+            <div class="wallet-form">
+              <label>Recipient phone (E.164)
+                <input id="send-phone" placeholder="+1234567890" />
+              </label>
+              <label>To address (optional override)
+                <input id="send-to" placeholder="Recipient address" />
+              </label>
+              <label>Amount (SOL)
+                <input id="send-amount" type="number" min="0" step="0.0001" placeholder="0.10" />
+              </label>
+              <label>Memo (optional)
+                <input id="send-memo" placeholder="Thanks for dinner" />
+              </label>
+              <button class="pill pill-solid" id="btn-send">Send (demo)</button>
+            </div>
+            <div class="wallet-status" id="send-status"></div>
+          </div>
+
+          <div class="wallet-card" id="contact-card" style="display:none;">
+            <div class="section-heading">
+              <div class="section-title">Contacts</div>
+              <button class="mini-btn" id="btn-add-contact">Add</button>
+            </div>
+            <div class="contact-list" id="contact-list"></div>
+            <div class="wallet-form" id="contact-form" style="display:none;">
+              <label>Name
+                <input id="contact-name" placeholder="Alice" />
+              </label>
+              <label>Phone (E.164)
+                <input id="contact-phone" placeholder="+1234567890" />
+              </label>
+              <label>Address
+                <input id="contact-address" placeholder="Destination address (optional)" />
+              </label>
+              <div class="inline-row">
+                <button class="pill pill-solid" id="contact-save">Save contact</button>
+                <button class="pill" id="contact-cancel">Cancel</button>
+              </div>
+            </div>
+          </div>
+
           <div class="wallet-status" id="action-status"></div>
         </div>
+      </div>
 
-        <div class="wallet-section">
+      <button class="pill contacts-toggle" id="btn-contacts-toggle" style="display:none;">Contacts</button>
+
+      <div class="settings-panel" id="settings-panel">
+        <div class="settings-header">
+          <div class="settings-title">Settings</div>
+          <button class="mini-btn" id="btn-settings-close">Close</button>
+        </div>
+
+        <div class="wallet-card" id="secret-card" style="display:block;">
           <div class="section-heading">
-            <div class="section-title">Receive / address</div>
-            <button class="mini-btn" id="btn-refresh-balance">Refresh balance</button>
+            <div class="section-title">Private key</div>
+            <div class="wallet-label">Base58 export</div>
           </div>
-          <div class="mono" id="current-address">No wallet yet.</div>
-          <div class="inline-row">
-            <button class="pill" id="btn-copy-address">Copy</button>
-            <button class="pill" id="btn-show-qr">Show QR</button>
-          </div>
-          <div class="qr-box" id="qr-box" style="display:none;">
-            <img id="qr-img" alt="QR code" style="width:160px;height:160px;object-fit:contain;" />
-            <div class="status" id="qr-status"></div>
+          <div class="secret-box">
+            <div class="wallet-label">Keep this safe. Anyone with it controls your funds.</div>
+            <div class="secret-field">
+              <input class="secret-input" id="secret-value" value="" readonly aria-label="Private key" />
+              <button class="mini-btn" id="btn-reveal-secret">Reveal</button>
+              <button class="mini-btn" id="btn-copy-secret">Copy</button>
+            </div>
           </div>
         </div>
 
-        <div class="wallet-section">
-          <div class="section-title">Send</div>
+        <div class="wallet-card" id="link-phone-card">
+          <div class="section-heading">
+            <div class="section-title">Link phone</div>
+            <div class="wallet-label">Use phone when logged in with username</div>
+          </div>
           <div class="wallet-form">
-            <label>Recipient phone (E.164)
-              <input id="send-phone" placeholder="+1234567890" />
-            </label>
-            <label>To address (optional override)
-              <input id="send-to" placeholder="Recipient address" />
-            </label>
-            <label>Amount (SOL)
-              <input id="send-amount" type="number" min="0" step="0.0001" placeholder="0.10" />
-            </label>
-            <label>Memo (optional)
-              <input id="send-memo" placeholder="Thanks for dinner" />
-            </label>
-            <button class="pill pill-solid" id="btn-send">Send (demo)</button>
-          </div>
-          <div class="wallet-status" id="send-status"></div>
-        </div>
-
-        <div class="wallet-section">
-          <div class="section-heading">
-            <div class="section-title">Contacts</div>
-            <button class="mini-btn" id="btn-add-contact">Add</button>
-          </div>
-          <div class="contact-list" id="contact-list"></div>
-          <div class="wallet-form" id="contact-form" style="display:none;">
-            <label>Name
-              <input id="contact-name" placeholder="Alice" />
-            </label>
-            <label>Address
-              <input id="contact-address" placeholder="Destination address" />
+            <label>Phone (E.164)
+              <input id="link-phone" placeholder="+1234567890" />
             </label>
             <div class="inline-row">
-              <button class="pill pill-solid" id="contact-save">Save contact</button>
-              <button class="pill" id="contact-cancel">Cancel</button>
+              <button class="mini-btn" id="btn-link-request-otp">Get code</button>
+              <input id="link-otp" placeholder="6-digit code" style="max-width:140px" />
             </div>
+            <button class="pill pill-solid" id="btn-link-save">Link phone</button>
+            <div class="wallet-status" id="settings-status"></div>
           </div>
         </div>
       </div>
@@ -728,8 +945,17 @@
     const walletAuthView = document.getElementById('wallet-auth');
     const walletAppView = document.getElementById('wallet-app');
     const walletNameEl = document.getElementById('wallet-name');
+    const walletNameInline = document.getElementById('wallet-name-inline');
     const renameBtn = document.getElementById('rename-wallet');
     const balanceEl = document.getElementById('wallet-balance');
+    const btnSettings = document.getElementById('btn-settings');
+    const btnSettingsClose = document.getElementById('btn-settings-close');
+    const settingsPanel = document.getElementById('settings-panel');
+    const linkPhoneInput = document.getElementById('link-phone');
+    const linkOtpInput = document.getElementById('link-otp');
+    const btnLinkRequestOtp = document.getElementById('btn-link-request-otp');
+    const btnLinkSave = document.getElementById('btn-link-save');
+    const settingsStatus = document.getElementById('settings-status');
     const btnLogout = document.getElementById('btn-logout');
     const btnGenerate = document.getElementById('btn-generate-wallet');
     const btnImport = document.getElementById('btn-import-wallet');
@@ -741,10 +967,12 @@
     const currentAddressEl = document.getElementById('current-address');
     const btnCopyAddress = document.getElementById('btn-copy-address');
     const btnShowQr = document.getElementById('btn-show-qr');
+    const btnShowQrHero = document.getElementById('btn-show-qr-hero');
     const qrBox = document.getElementById('qr-box');
     const qrImg = document.getElementById('qr-img');
     const qrStatus = document.getElementById('qr-status');
     const btnRefreshBalance = document.getElementById('btn-refresh-balance');
+    const btnSendShortcut = document.getElementById('btn-send-shortcut');
     const sendPhone = document.getElementById('send-phone');
     const sendTo = document.getElementById('send-to');
     const sendAmount = document.getElementById('send-amount');
@@ -754,11 +982,22 @@
     const btnAddContact = document.getElementById('btn-add-contact');
     const contactForm = document.getElementById('contact-form');
     const contactName = document.getElementById('contact-name');
+    const contactPhone = document.getElementById('contact-phone');
     const contactAddress = document.getElementById('contact-address');
     const contactSave = document.getElementById('contact-save');
     const contactCancel = document.getElementById('contact-cancel');
     const contactList = document.getElementById('contact-list');
     const resizeHandle = document.getElementById('wallet-resize');
+    const walletEmpty = document.getElementById('wallet-empty');
+    const walletDashboard = document.getElementById('wallet-dashboard');
+    const tokenCard = document.getElementById('token-card');
+    const secretCard = document.getElementById('secret-card');
+    const sendCard = document.getElementById('send-card');
+    const contactCard = document.getElementById('contact-card');
+    const btnContactsToggle = document.getElementById('btn-contacts-toggle');
+    const secretValue = document.getElementById('secret-value');
+    const btnRevealSecret = document.getElementById('btn-reveal-secret');
+    const btnCopySecret = document.getElementById('btn-copy-secret');
 
     const dragState = { active: false, offsetX: 0, offsetY: 0 };
     const resizeState = { active: false, startX: 0, startY: 0, startW: 0, startH: 0 };
@@ -768,6 +1007,8 @@
 
     let authenticated = false;
     let state = loadState();
+    let secretRevealed = false;
+    let contactsOpen = false;
 
     function loadState() {
       try {
@@ -818,6 +1059,11 @@
       el.classList.toggle('status-error', type === 'error');
     };
 
+    const toggleSettingsPanel = (show) => {
+      const next = typeof show === 'boolean' ? show : !settingsPanel?.classList.contains('active');
+      settingsPanel?.classList.toggle('active', next);
+    };
+
     const toggleView = (next) => {
       walletAuthView.classList.toggle('active', next === 'auth');
       walletAppView.classList.toggle('active', next === 'app');
@@ -839,21 +1085,41 @@
         const btn = document.createElement('button');
         btn.className = 'tag';
         btn.textContent = `${c.name}`;
-        btn.title = c.address;
+        btn.title = c.phone || c.address || '';
         btn.addEventListener('click', () => {
-          if (sendTo) sendTo.value = c.address;
+          if (sendPhone) sendPhone.value = c.phone || '';
+          if (sendTo) sendTo.value = c.address || '';
         });
         contactList.appendChild(btn);
       });
     };
 
     const renderWallet = () => {
+      const hasWallet = !!state.wallet?.pub;
       if (walletNameEl) walletNameEl.textContent = state.walletName || 'Wallet';
+      if (walletNameInline) walletNameInline.textContent = state.walletName || 'Wallet';
       const balanceVal = Number(state.balance || 0).toFixed(3);
       if (balanceEl) balanceEl.textContent = `${balanceVal} SOL`;
+      if (document.getElementById('token-sol')) document.getElementById('token-sol').textContent = `${balanceVal} SOL`;
+
       const address = state.wallet?.pub;
       if (currentAddressEl) currentAddressEl.textContent = address || 'No wallet yet.';
       if (qrBox) qrBox.style.display = 'none';
+
+      if (walletEmpty) walletEmpty.style.display = hasWallet ? 'none' : 'block';
+      if (walletDashboard) walletDashboard.style.display = hasWallet ? 'grid' : 'none';
+      if (tokenCard) tokenCard.style.display = hasWallet ? 'block' : 'none';
+      if (sendCard) sendCard.style.display = hasWallet ? 'block' : 'none';
+      if (contactCard) contactCard.style.display = hasWallet && contactsOpen ? 'block' : 'none';
+      if (btnContactsToggle) btnContactsToggle.style.display = hasWallet ? 'inline-flex' : 'none';
+
+      if (secretValue) {
+        secretValue.value = hasWallet ? 'Hidden — tap reveal' : '';
+        secretValue.disabled = !hasWallet;
+      }
+      if (btnRevealSecret) btnRevealSecret.disabled = !hasWallet;
+      if (btnCopySecret) btnCopySecret.disabled = !hasWallet;
+
       renderContacts();
     };
 
@@ -977,6 +1243,17 @@
       }
     };
 
+    const loadContacts = async () => {
+      try {
+        const res = await api('/contacts', { auth: true });
+        state.contacts = res.contacts || [];
+        saveState();
+        renderContacts();
+      } catch (err) {
+        // ignore silently
+      }
+    };
+
     const ensureAuthenticatedView = async () => {
       const token = localStorage.getItem(TOKEN_KEY);
       if (token) {
@@ -984,6 +1261,7 @@
           await api('/me', { auth: true });
           authenticated = true;
           await loadAddresses();
+          await loadContacts();
           toggleView('app');
           renderWallet();
           return;
@@ -1020,13 +1298,22 @@
 
     const loadSolana = async () => {
       if (window.__solanaMods) return window.__solanaMods;
-      const solanaPromise = import('https://cdn.jsdelivr.net/npm/@solana/web3.js@1.98.4/lib/index.browser.esm.js');
+
+      const loadScriptGlobal = (src, globalKey) => new Promise((resolve, reject) => {
+        if (window[globalKey]) return resolve(window[globalKey]);
+        const s = document.createElement('script');
+        s.src = src;
+        s.async = true;
+        s.onload = () => resolve(window[globalKey]);
+        s.onerror = (e) => reject(e);
+        document.head.appendChild(s);
+      });
 
       const loadBs58 = async () => {
         if (window.bs58) return window.bs58;
         try {
-          await import('https://cdnjs.cloudflare.com/ajax/libs/bs58/6.0.0/bs58.min.js');
-          if (window.bs58) return window.bs58;
+          const globalBs = await loadScriptGlobal('https://cdnjs.cloudflare.com/ajax/libs/bs58/6.0.0/bs58.min.js', 'bs58');
+          if (globalBs) return globalBs;
         } catch (err) {
           console.warn('UMD bs58 import failed', err);
         }
@@ -1036,7 +1323,9 @@
       };
 
       const bs58 = await loadBs58();
-      const { Keypair, Transaction, PublicKey, Connection, clusterApiUrl } = await solanaPromise;
+      const solanaWeb3 = await loadScriptGlobal('https://cdn.jsdelivr.net/npm/@solana/web3.js@1.98.4/lib/index.iife.min.js', 'solanaWeb3');
+      if (!solanaWeb3) throw new Error('Failed to load Solana web3');
+      const { Keypair, Transaction, PublicKey, Connection, clusterApiUrl } = solanaWeb3;
       window.__solanaMods = { Keypair, Transaction, PublicKey, Connection, clusterApiUrl, bs58 };
       return window.__solanaMods;
     };
@@ -1044,6 +1333,8 @@
     const setWallet = async (kp, secretBase58) => {
       state.wallet = { pub: kp.publicKey.toBase58(), sec: secretBase58 };
       saveState();
+      secretRevealed = false;
+      if (secretValue) secretValue.value = 'Hidden — tap reveal';
       renderWallet();
       setStatus(actionStatus, 'Wallet ready locally.', 'success');
       if (authenticated) {
@@ -1092,6 +1383,7 @@
       localStorage.setItem(TOKEN_KEY, data.token);
       authenticated = true;
       await loadAddresses();
+      await loadContacts();
       setStatus(statusTarget, 'Verified. Token saved.', 'success');
       toggleView('app');
       renderWallet();
@@ -1159,6 +1451,7 @@
         localStorage.setItem(TOKEN_KEY, data.token);
         authenticated = true;
         await loadAddresses();
+        await loadContacts();
         setStatus(usernameSignupStatus, 'Account created. Logged in.', 'success');
         toggleView('app');
         renderWallet();
@@ -1177,6 +1470,7 @@
         localStorage.setItem(TOKEN_KEY, data.token);
         authenticated = true;
         await loadAddresses();
+        await loadContacts();
         setStatus(loginUsernameStatus, 'Logged in.', 'success');
         toggleView('app');
         renderWallet();
@@ -1233,8 +1527,42 @@
       if (qrStatus) qrStatus.textContent = 'Scan to receive';
     });
 
+    btnShowQrHero?.addEventListener('click', () => {
+      btnShowQr?.click();
+    });
+
+    btnSendShortcut?.addEventListener('click', () => {
+      if (sendCard) sendCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+
     btnRefreshBalance?.addEventListener('click', () => {
       refreshBalance();
+    });
+
+    btnLinkRequestOtp?.addEventListener('click', async () => {
+      const phone = linkPhoneInput?.value.trim();
+      if (!phone) return setStatus(settingsStatus, 'Enter phone first.', 'error');
+      try {
+        setStatus(settingsStatus, 'Requesting code...');
+        await api('/auth/request-otp', { method: 'POST', body: JSON.stringify({ phone }) });
+        setStatus(settingsStatus, 'OTP sent.', 'success');
+      } catch (err) {
+        setStatus(settingsStatus, 'OTP failed: ' + err.message, 'error');
+      }
+    });
+
+    btnLinkSave?.addEventListener('click', async () => {
+      const phone = linkPhoneInput?.value.trim();
+      const code = linkOtpInput?.value.trim();
+      if (!phone || !code) return setStatus(settingsStatus, 'Phone and code required.', 'error');
+      try {
+        setStatus(settingsStatus, 'Linking...');
+        const res = await api('/settings/phone', { method: 'POST', auth: true, body: JSON.stringify({ phone, code }) });
+        if (res.token) localStorage.setItem(TOKEN_KEY, res.token);
+        setStatus(settingsStatus, 'Phone linked.', 'success');
+      } catch (err) {
+        setStatus(settingsStatus, 'Link failed: ' + err.message, 'error');
+      }
     });
 
     const uint8ToBase64 = (u8) => {
@@ -1303,9 +1631,13 @@
       renderWallet();
     });
 
+    btnSettings?.addEventListener('click', () => toggleSettingsPanel(true));
+    btnSettingsClose?.addEventListener('click', () => toggleSettingsPanel(false));
+
     btnAddContact?.addEventListener('click', () => {
       if (contactForm) contactForm.style.display = 'grid';
       contactName.value = '';
+      contactPhone.value = '';
       contactAddress.value = '';
     });
 
@@ -1313,15 +1645,53 @@
       if (contactForm) contactForm.style.display = 'none';
     });
 
+    btnContactsToggle?.addEventListener('click', () => {
+      contactsOpen = !contactsOpen;
+      renderWallet();
+    });
+
     contactSave?.addEventListener('click', () => {
       const name = contactName.value.trim();
+      const phone = contactPhone.value.trim();
       const address = contactAddress.value.trim();
-      if (!name || !address) return;
-      state.contacts = state.contacts || [];
-      state.contacts.push({ name, address });
-      saveState();
-      renderContacts();
-      if (contactForm) contactForm.style.display = 'none';
+      if (!name || !phone) return setStatus(actionStatus, 'Name and phone are required.', 'error');
+      const saveLocal = (contact) => {
+        state.contacts = state.contacts || [];
+        const idx = state.contacts.findIndex((c) => c.phone === contact.phone);
+        if (idx >= 0) state.contacts[idx] = contact; else state.contacts.push(contact);
+        saveState();
+        renderContacts();
+      };
+      const contactPayload = { name, phone, address: address || undefined };
+      if (authenticated) {
+        api('/contacts', { method: 'POST', auth: true, body: JSON.stringify(contactPayload) })
+          .then((res) => {
+            saveLocal(res.contact || contactPayload);
+            setStatus(actionStatus, 'Contact saved.', 'success');
+          })
+          .catch((err) => setStatus(actionStatus, 'Save failed: ' + err.message, 'error'))
+          .finally(() => { if (contactForm) contactForm.style.display = 'none'; });
+      } else {
+        saveLocal(contactPayload);
+        if (contactForm) contactForm.style.display = 'none';
+      }
+    });
+
+    btnRevealSecret?.addEventListener('click', () => {
+      if (!state.wallet?.sec) return setStatus(actionStatus, 'No wallet yet.', 'error');
+      secretRevealed = !secretRevealed;
+      if (secretValue) secretValue.value = secretRevealed ? state.wallet.sec : 'Hidden — tap reveal';
+      if (btnRevealSecret) btnRevealSecret.textContent = secretRevealed ? 'Hide' : 'Reveal';
+    });
+
+    btnCopySecret?.addEventListener('click', async () => {
+      if (!state.wallet?.sec) return setStatus(actionStatus, 'No wallet yet.', 'error');
+      try {
+        await navigator.clipboard.writeText(state.wallet.sec);
+        setStatus(actionStatus, 'Secret copied.', 'success');
+      } catch (err) {
+        setStatus(actionStatus, 'Copy failed: ' + err.message, 'error');
+      }
     });
 
     ensureAuthenticatedView();

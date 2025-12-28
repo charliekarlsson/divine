@@ -5,7 +5,7 @@ import { randomBytes, scryptSync, timingSafeEqual } from 'crypto';
 import { config } from './config.js';
 import { InMemoryOtpStore } from './otpStore.js';
 import { PgOtpStore } from './pgOtpStore.js';
-import { requestOtpSchema, verifyOtpSchema, addAddressSchema, prepareTransferSchema, submitTransferSchema, passwordAuthSchema, usernamePasswordSchema } from './schema.js';
+import { requestOtpSchema, verifyOtpSchema, addAddressSchema, prepareTransferSchema, submitTransferSchema, passwordAuthSchema, usernamePasswordSchema, linkPhoneSchema, contactSchema } from './schema.js';
 import { makeTwilioClient, sendOtpSms } from './twilioClient.js';
 import { getPool, runMigrations } from './db.js';
 import { requireAuth } from './auth.js';
@@ -181,6 +181,66 @@ fastify.get('/me', async (request, reply) => {
   const ctx = requireAuth(request, reply);
   if (!ctx) return;
   return reply.send({ ok: true, phone: ctx.phone, username: ctx.username, uid: ctx.uid });
+});
+
+fastify.post('/settings/phone', async (request, reply) => {
+  const ctx = requireAuth(request, reply);
+  if (!ctx) return;
+  if (!useDb) return reply.code(500).send({ error: 'Database required' });
+  const parsed = linkPhoneSchema.safeParse(request.body);
+  if (!parsed.success) return reply.code(400).send({ error: parsed.error.format() });
+  const { phone, code } = parsed.data;
+  const ok = await Promise.resolve(otpStore.verify(phone, code, config.otp.maxAttempts));
+  if (!ok) return reply.code(401).send({ error: 'Invalid or expired code' });
+  if (!ctx.uid) return reply.code(400).send({ error: 'User id missing' });
+  const pool = getPool();
+  try {
+    const res = await pool.query('UPDATE users SET phone_e164 = $1 WHERE id = $2 RETURNING id', [phone, ctx.uid]);
+    if (!res.rowCount) return reply.code(404).send({ error: 'User not found' });
+    const token = jwt.sign({ sub: ctx.username ?? phone, phone, username: ctx.username, uid: ctx.uid }, config.jwtSecret, { expiresIn: '30d' });
+    return reply.send({ ok: true, phone, token });
+  } catch (err: any) {
+    if (err?.code === '23505') {
+      return reply.code(409).send({ error: 'Phone already linked to another account' });
+    }
+    request.log.error({ err }, 'Failed to link phone');
+    return reply.code(500).send({ error: 'Failed to link phone' });
+  }
+});
+
+fastify.get('/contacts', async (request, reply) => {
+  const ctx = requireAuth(request, reply);
+  if (!ctx) return;
+  if (!useDb) return reply.code(500).send({ error: 'Database required' });
+  if (!ctx.uid) return reply.code(400).send({ error: 'User id missing' });
+  const pool = getPool();
+  const res = await pool.query('SELECT id, name, phone_e164 AS phone, address FROM contacts WHERE user_id = $1 ORDER BY created_at DESC', [ctx.uid]);
+  return reply.send({ ok: true, contacts: res.rows });
+});
+
+fastify.post('/contacts', async (request, reply) => {
+  const ctx = requireAuth(request, reply);
+  if (!ctx) return;
+  if (!useDb) return reply.code(500).send({ error: 'Database required' });
+  const parsed = contactSchema.safeParse(request.body);
+  if (!parsed.success) return reply.code(400).send({ error: parsed.error.format() });
+  if (!ctx.uid) return reply.code(400).send({ error: 'User id missing' });
+  const { name, phone, address } = parsed.data;
+  const pool = getPool();
+  try {
+    const res = await pool.query(
+      `INSERT INTO contacts (user_id, name, phone_e164, address)
+       VALUES ($1, $2, $3, $4)
+       ON CONFLICT (user_id, phone_e164)
+       DO UPDATE SET name = EXCLUDED.name, address = EXCLUDED.address
+       RETURNING id, name, phone_e164 AS phone, address`,
+      [ctx.uid, name, phone, address ?? null]
+    );
+    return reply.send({ ok: true, contact: res.rows[0] });
+  } catch (err) {
+    request.log.error({ err }, 'Failed to save contact');
+    return reply.code(500).send({ error: 'Failed to save contact' });
+  }
 });
 
 fastify.post('/addresses', async (request, reply) => {

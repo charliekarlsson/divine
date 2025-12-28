@@ -28,6 +28,17 @@ export const addAddressSchema = z.object({
   isDefault: z.boolean().optional()
 });
 
+export const linkPhoneSchema = z.object({
+  phone: phoneSchema,
+  code: z.string().length(6)
+});
+
+export const contactSchema = z.object({
+  name: z.string().min(1).max(120),
+  phone: phoneSchema,
+  address: z.string().min(10).optional()
+});
+
 export const prepareTransferSchema = z.object({
   to_phone: phoneSchema,
   to_address: z.string().min(10).optional(),

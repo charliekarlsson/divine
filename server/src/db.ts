@@ -70,6 +70,19 @@ export async function runMigrations() {
     await client.query(`ALTER TABLE transfers ADD COLUMN IF NOT EXISTS from_address TEXT;`);
     await client.query(`ALTER TABLE transfers ADD COLUMN IF NOT EXISTS memo TEXT;`);
     await client.query(`ALTER TABLE transfers ADD COLUMN IF NOT EXISTS prepared_tx_base64 TEXT;`);
+
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS contacts (
+        id SERIAL PRIMARY KEY,
+        user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+        name TEXT NOT NULL,
+        phone_e164 TEXT,
+        address TEXT,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        UNIQUE(user_id, phone_e164)
+      );
+      CREATE INDEX IF NOT EXISTS idx_contacts_user ON contacts(user_id);
+    `);
     await client.query('COMMIT');
   } catch (err) {
     await client.query('ROLLBACK');
