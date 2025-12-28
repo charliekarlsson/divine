@@ -11,6 +11,11 @@ export const verifyOtpSchema = z.object({
   code: z.string().length(6)
 });
 
+export const passwordAuthSchema = z.object({
+  phone: phoneSchema,
+  password: z.string().min(6).max(128)
+});
+
 export const addAddressSchema = z.object({
   address: z.string().min(10, 'Address required'),
   isDefault: z.boolean().optional()

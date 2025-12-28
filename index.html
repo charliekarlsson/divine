@@ -428,6 +428,7 @@
         <div class="wallet-actions">
           <button class="pill pill-solid" id="mode-create" data-mode="create">Sign up</button>
           <button class="pill pill-ghost" id="mode-login" data-mode="login">Login</button>
+          <button class="pill" id="mode-password" data-mode="password">Password login</button>
         </div>
         <div class="wallet-form" id="wallet-form">
           <div class="wallet-form-title" id="form-title">Login with phone</div>
@@ -441,6 +442,26 @@
           </div>
         </div>
         <div class="wallet-status" id="wallet-status">Select an option to continue.</div>
+        </div>
+
+        <div class="wallet-section" id="password-section" style="display:none;">
+          <div class="section-heading">
+            <div class="section-title">Alternative login</div>
+          </div>
+          <div class="wallet-form" id="password-form">
+            <label>Phone
+              <input id="pw-phone" placeholder="+1234567890" />
+            </label>
+            <label>Password
+              <input id="pw-password" type="password" placeholder="Enter password" />
+            </label>
+            <div class="inline-row">
+              <button class="pill pill-solid" id="btn-password-login">Login</button>
+              <button class="pill" id="btn-password-register">Set password</button>
+            </div>
+            <div class="wallet-status" id="password-status"></div>
+          </div>
+        </div>
       </div>
 
       <div class="wallet-view" id="wallet-app">
@@ -612,12 +633,19 @@
     const openWalletBtn = document.getElementById('open-wallet');
     const modeCreateBtn = document.getElementById('mode-create');
     const modeLoginBtn = document.getElementById('mode-login');
+    const modePasswordBtn = document.getElementById('mode-password');
     const statusEl = document.getElementById('wallet-status');
     const form = document.getElementById('wallet-form');
     const formTitle = document.getElementById('form-title');
     const submitBtn = document.getElementById('wallet-submit');
     const phoneInput = document.getElementById('w-phone');
     const otpInput = document.getElementById('w-otp');
+    const passwordSection = document.getElementById('password-section');
+    const pwPhone = document.getElementById('pw-phone');
+    const pwPassword = document.getElementById('pw-password');
+    const pwStatus = document.getElementById('password-status');
+    const pwLoginBtn = document.getElementById('btn-password-login');
+    const pwRegisterBtn = document.getElementById('btn-password-register');
     const requestOtpBtn = document.getElementById('btn-request-otp');
     const dragHandle = document.getElementById('wallet-drag');
     const walletAuthView = document.getElementById('wallet-auth');
@@ -823,13 +851,28 @@
 
     const setMode = (next) => {
       mode = next;
-      modeCreateBtn.classList.toggle('active', next === 'create');
-      modeLoginBtn.classList.toggle('active', next === 'login');
-      if (formTitle) formTitle.textContent = 'Login with phone';
-      if (submitBtn) submitBtn.textContent = 'Verify';
-      if (statusEl) setStatus(statusEl, 'Enter phone then request & verify code.');
-      if (form) form.style.display = 'grid';
+      modeCreateBtn?.classList.toggle('active', next === 'create');
+      modeLoginBtn?.classList.toggle('active', next === 'login');
+      modePasswordBtn?.classList.toggle('active', next === 'password');
+      const isPassword = next === 'password';
+      if (passwordSection) passwordSection.style.display = isPassword ? 'block' : 'none';
+      if (form) form.style.display = isPassword ? 'none' : 'grid';
+      if (next === 'create') {
+        if (formTitle) formTitle.textContent = 'Sign up with phone';
+        if (submitBtn) submitBtn.textContent = 'Create account';
+        if (statusEl) setStatus(statusEl, 'Enter phone then request & verify code.');
+      } else if (next === 'login') {
+        if (formTitle) formTitle.textContent = 'Login with phone';
+        if (submitBtn) submitBtn.textContent = 'Verify';
+        if (statusEl) setStatus(statusEl, 'Request and verify OTP to login.');
+      } else {
+        if (statusEl) setStatus(statusEl, 'Use password form below.', '');
+      }
     };
+
+    modeCreateBtn?.addEventListener('click', () => setMode('create'));
+    modeLoginBtn?.addEventListener('click', () => setMode('login'));
+    modePasswordBtn?.addEventListener('click', () => setMode('password'));
 
     const loadAddresses = async () => {
       try {
@@ -868,6 +911,8 @@
       if (statusEl) setStatus(statusEl, authenticated ? 'Session restored.' : 'Request and verify OTP to continue.');
       phoneInput.value = '';
       otpInput.value = '';
+      if (pwPhone) pwPhone.value = '';
+      if (pwPassword) pwPassword.value = '';
     });
 
     document.addEventListener('click', (e) => {
@@ -980,6 +1025,29 @@
         setStatus(actionStatus, 'Generation failed: ' + err.message, 'error');
       }
     });
+
+    const handlePasswordAuth = async (intent) => {
+      const phone = pwPhone?.value.trim();
+      const password = pwPassword?.value.trim();
+      if (!phone || !password) return setStatus(pwStatus, 'Phone and password required.', 'error');
+      try {
+        setStatus(pwStatus, intent === 'login' ? 'Signing in...' : 'Saving password...');
+        const endpoint = intent === 'login' ? '/auth/login-password' : '/auth/register-password';
+        const data = await api(endpoint, { method: 'POST', body: JSON.stringify({ phone, password }) });
+        localStorage.setItem(TOKEN_KEY, data.token);
+        authenticated = true;
+        await loadAddresses();
+        setStatus(pwStatus, intent === 'login' ? 'Logged in with password.' : 'Password set and logged in.', 'success');
+        toggleView('app');
+        renderWallet();
+        showPanel(true);
+      } catch (err) {
+        setStatus(pwStatus, (intent === 'login' ? 'Login failed: ' : 'Save failed: ') + err.message, 'error');
+      }
+    };
+
+    pwLoginBtn?.addEventListener('click', () => handlePasswordAuth('login'));
+    pwRegisterBtn?.addEventListener('click', () => handlePasswordAuth('register'));
 
     btnImport?.addEventListener('click', () => {
       if (importForm) importForm.style.display = 'grid';

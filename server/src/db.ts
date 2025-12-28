@@ -23,9 +23,11 @@ export async function runMigrations() {
       CREATE TABLE IF NOT EXISTS users (
         id SERIAL PRIMARY KEY,
         phone_e164 TEXT UNIQUE NOT NULL,
+        password_hash TEXT,
         created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
       );
     `);
+    await client.query('ALTER TABLE users ADD COLUMN IF NOT EXISTS password_hash TEXT;');
     await client.query(`
       CREATE TABLE IF NOT EXISTS otps (
         phone_e164 TEXT PRIMARY KEY,

@@ -1,10 +1,11 @@
 import Fastify from 'fastify';
 import cors from '@fastify/cors';
 import jwt from 'jsonwebtoken';
+import { randomBytes, scryptSync, timingSafeEqual } from 'crypto';
 import { config } from './config.js';
 import { InMemoryOtpStore } from './otpStore.js';
 import { PgOtpStore } from './pgOtpStore.js';
-import { requestOtpSchema, verifyOtpSchema, addAddressSchema, prepareTransferSchema, submitTransferSchema } from './schema.js';
+import { requestOtpSchema, verifyOtpSchema, addAddressSchema, prepareTransferSchema, submitTransferSchema, passwordAuthSchema } from './schema.js';
 import { makeTwilioClient, sendOtpSms } from './twilioClient.js';
 import { getPool, runMigrations } from './db.js';
 import { requireAuth } from './auth.js';
@@ -24,6 +25,25 @@ if (useDb) {
 }
 
 const twilioClient = config.twilio.accountSid ? makeTwilioClient() : null;
+
+const hashPassword = (password: string) => {
+  const salt = randomBytes(16).toString('hex');
+  const derived = scryptSync(password, salt, 64).toString('hex');
+  return `s:${salt}:${derived}`;
+};
+
+const verifyPassword = (password: string, stored: string | null) => {
+  if (!stored || !stored.startsWith('s:')) return false;
+  const parts = stored.split(':');
+  if (parts.length !== 3) return false;
+  const [, salt, hash] = parts;
+  const derived = scryptSync(password, salt, 64).toString('hex');
+  try {
+    return timingSafeEqual(Buffer.from(hash, 'hex'), Buffer.from(derived, 'hex'));
+  } catch {
+    return false;
+  }
+};
 
 const fastify = Fastify({ logger: true });
 fastify.register(cors, {
@@ -73,6 +93,46 @@ fastify.post('/auth/verify-otp', async (request, reply) => {
     userId = res.rows[0]?.id ?? null;
   }
   const token = jwt.sign({ sub: phone, uid: userId ?? undefined }, config.jwtSecret, { expiresIn: '30d' });
+  return reply.send({ ok: true, phone, token });
+});
+
+fastify.post('/auth/register-password', async (request, reply) => {
+  if (!useDb) return reply.code(500).send({ error: 'Database required' });
+  const parsed = passwordAuthSchema.safeParse(request.body);
+  if (!parsed.success) {
+    return reply.code(400).send({ error: parsed.error.format() });
+  }
+  const { phone, password } = parsed.data;
+  const passwordHash = hashPassword(password);
+  const pool = getPool();
+  const res = await pool.query(
+    `INSERT INTO users (phone_e164, password_hash)
+     VALUES ($1, $2)
+     ON CONFLICT (phone_e164) DO UPDATE SET password_hash = EXCLUDED.password_hash
+     RETURNING id`,
+    [phone, passwordHash]
+  );
+  const uid = res.rows[0]?.id ?? null;
+  const token = jwt.sign({ sub: phone, uid: uid ?? undefined }, config.jwtSecret, { expiresIn: '30d' });
+  return reply.send({ ok: true, phone, token });
+});
+
+fastify.post('/auth/login-password', async (request, reply) => {
+  if (!useDb) return reply.code(500).send({ error: 'Database required' });
+  const parsed = passwordAuthSchema.safeParse(request.body);
+  if (!parsed.success) {
+    return reply.code(400).send({ error: parsed.error.format() });
+  }
+  const { phone, password } = parsed.data;
+  const pool = getPool();
+  const res = await pool.query('SELECT id, password_hash FROM users WHERE phone_e164 = $1', [phone]);
+  const row = res.rows[0];
+  if (!row || !row.password_hash) {
+    return reply.code(401).send({ error: 'Password not set for this phone' });
+  }
+  const ok = verifyPassword(password, row.password_hash);
+  if (!ok) return reply.code(401).send({ error: 'Invalid credentials' });
+  const token = jwt.sign({ sub: phone, uid: row.id }, config.jwtSecret, { expiresIn: '30d' });
   return reply.send({ ok: true, phone, token });
 });
 
