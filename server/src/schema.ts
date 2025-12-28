@@ -10,3 +10,14 @@ export const verifyOtpSchema = z.object({
   phone: phoneSchema,
   code: z.string().length(6)
 });
+
+export const addAddressSchema = z.object({
+  address: z.string().min(10, 'Address required'),
+  isDefault: z.boolean().optional()
+});
+
+export const transferSchema = z.object({
+  to_phone: phoneSchema,
+  amount_lamports: z.bigint().or(z.number().int().positive()),
+  memo: z.string().max(120).optional()
+});

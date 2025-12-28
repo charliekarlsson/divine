@@ -9,7 +9,9 @@ export function getPool(): Pool {
   if (!connectionString) {
     throw new Error('DATABASE_URL is required for Postgres pool.');
   }
-  pool = new Pool({ connectionString, ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : undefined });
+  // Railway and many managed Postgres providers require TLS; allow self-signed certs by default.
+  const ssl = { rejectUnauthorized: process.env.DB_STRICT_SSL === 'true' ? true : false };
+  pool = new Pool({ connectionString, ssl });
   return pool;
 }
 
@@ -30,6 +32,30 @@ export async function runMigrations() {
         code TEXT NOT NULL,
         expires_at TIMESTAMPTZ NOT NULL,
         attempts INTEGER NOT NULL DEFAULT 0,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      );
+    `);
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS addresses (
+        id SERIAL PRIMARY KEY,
+        user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+        address TEXT NOT NULL,
+        is_default BOOLEAN NOT NULL DEFAULT FALSE,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        UNIQUE(user_id, address)
+      );
+      CREATE INDEX IF NOT EXISTS idx_addresses_user_default ON addresses(user_id) WHERE is_default = TRUE;
+    `);
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS transfers (
+        id SERIAL PRIMARY KEY,
+        from_user INTEGER REFERENCES users(id) ON DELETE SET NULL,
+        to_user INTEGER REFERENCES users(id) ON DELETE SET NULL,
+        to_phone TEXT NOT NULL,
+        to_address TEXT,
+        amount_lamports BIGINT NOT NULL,
+        status TEXT NOT NULL DEFAULT 'pending',
+        tx_signature TEXT,
         created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
       );
     `);
