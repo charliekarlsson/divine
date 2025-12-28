@@ -368,6 +368,12 @@
       color: #e8ecff;
       font-family: inherit;
     }
+    .wallet-form input::-webkit-outer-spin-button,
+    .wallet-form input::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+    .wallet-form input[type=number] { -moz-appearance: textfield; }
     .wallet-form input:focus { outline: 2px solid rgba(127,96,249,0.6); border-color: transparent; }
     .wallet-form-title { font-size: 1rem; font-weight: 700; text-align: left; }
     .wallet-section {
@@ -1017,7 +1023,7 @@
       const solanaPromise = import('https://cdn.jsdelivr.net/npm/@solana/web3.js@1.98.4/lib/index.browser.esm.js');
       let bs58mod;
       try {
-        bs58mod = await import('https://esm.sh/bs58@6.0.0');
+        bs58mod = await import('https://esm.sh/bs58@6.0.0?bundle');
       } catch (err) {
         console.warn('Primary bs58 import failed, trying jsdelivr', err);
         bs58mod = await import('https://cdn.jsdelivr.net/npm/bs58@6.0.0/dist/bs58.mjs');
