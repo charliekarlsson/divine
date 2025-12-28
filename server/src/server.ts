@@ -32,17 +32,6 @@ fastify.register(cors, {
   credentials: true
 });
 
-// Fallback OPTIONS handler to satisfy preflight even if a route is missing.
-fastify.options('*', async (request, reply) => {
-  reply
-    .header('Access-Control-Allow-Origin', request.headers.origin || '*')
-    .header('Access-Control-Allow-Methods', 'GET,POST,PUT,PATCH,DELETE,OPTIONS,HEAD')
-    .header('Access-Control-Allow-Headers', request.headers['access-control-request-headers'] || 'Content-Type, Authorization')
-    .header('Access-Control-Allow-Credentials', 'true')
-    .code(204)
-    .send();
-});
-
 fastify.post('/auth/request-otp', async (request, reply) => {
   const parsed = requestOtpSchema.safeParse(request.body);
   if (!parsed.success) {
