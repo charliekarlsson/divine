@@ -3,6 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Set this to your deployed API base to avoid hitting the static host -->
+  <meta name="divine-api-base" content="https://divine-production.up.railway.app">
   <title>Dash | Background Video</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -84,6 +86,7 @@
       text-transform: uppercase;
       font-size: 1rem;
     }
+    .brand img { height: 72px; width: auto; display: block; }
     nav {
       display: flex;
       gap: 26px;
@@ -101,6 +104,31 @@
     }
     nav a:hover { background: rgba(255,255,255,0.06); transform: translateY(-1px); }
     nav a:active { transform: translateY(0); }
+    .social-inline {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+    .social-inline a {
+      padding: 0;
+      border: none;
+      background: none;
+      transition: transform 120ms ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 0;
+    }
+    .social-inline a:hover { transform: translateY(-2px); }
+    .social-inline a:active { transform: translateY(0); }
+    .social-icon { height: 30px; width: 30px; object-fit: contain; display: block; }
+    .social-icon.x { height: 34px; width: 34px; }
+    .social-icon.tg { height: 30px; width: 30px; }
+    header .social-icon { height: 39px; width: 39px; }
+    header .social-icon.x { height: 45px; width: 45px; }
+    header .social-icon.tg { height: 39px; width: 39px; }
+    footer .social-icon { height: 38px; width: 38px; }
+    footer .social-icon.x { height: 43px; width: 43px; }
+    footer .social-icon.tg { height: 38px; width: 38px; }
     .grid {
       display: grid;
       grid-template-columns: minmax(360px, 540px) minmax(460px, 820px);
@@ -115,12 +143,12 @@
       text-transform: uppercase;
       letter-spacing: 0.18em;
       font-weight: 600;
-      font-size: 1.9rem;
+      font-size: 2.3rem;
       color: rgba(232,236,255,0.78);
     }
     h1 {
       font-family: 'TT Interphases', 'Space Grotesk', system-ui, -apple-system, sans-serif;
-      font-size: clamp(2.1rem, 4.2vw, 3rem);
+      font-size: clamp(2.6rem, 5vw, 3.8rem);
       font-weight: 300;
       line-height: 1.05;
       margin-left: -2px;
@@ -132,36 +160,49 @@
     }
     .cta-row { display: inline-flex; gap: 14px; margin-top: 28px; flex-wrap: wrap; }
     .pill {
-      padding: 12px 20px;
+      padding: 14px 24px;
       border-radius: 999px;
       border: 1px solid rgba(255,255,255,0.32);
       background: rgba(255,255,255,0.06);
       color: #e8ecff;
       font-weight: 700;
+      font-size: 1rem;
       letter-spacing: 0.08em;
       text-decoration: none;
       transition: transform 150ms ease, background 150ms ease, border-color 150ms ease;
     }
     .pill:hover { transform: translateY(-2px); background: rgba(255,255,255,0.1); }
     .pill:active { transform: translateY(0); }
+    .pill-ghost { background: rgba(255,255,255,0.02); border-color: rgba(255,255,255,0.14); color: #e8ecff; }
+    .pill-ghost.active { border-color: #7f60f9; background: rgba(127,96,249,0.15); box-shadow: 0 10px 30px rgba(127,96,249,0.25); }
+    .pill-solid {
+      background: linear-gradient(135deg, #1a1f3a 0%, #2d2f55 100%);
+      border-color: rgba(127,96,249,0.5);
+      color: #f2f4ff;
+      box-shadow: 0 6px 18px rgba(127,96,249,0.18);
+      font-size: 1rem;
+    }
+    .pill-solid:hover { background: linear-gradient(135deg, #222746 0%, #3a3d63 100%); border-color: rgba(127,96,249,0.65); }
     .visuals {
       display: grid;
       gap: 0;
       justify-self: end;
-      transform: translateX(36px) translateY(-24px);
+      justify-items: center;
+      text-align: center;
+      transform: translateX(110px) translateY(-24px);
     }
     .phones {
       width: 100%;
-      max-width: 820px;
+      max-width: 840px;
     }
     .badges {
       display: flex;
-      gap: 12px;
+      gap: 16px;
       justify-content: center;
-      margin-top: -48px;
+      margin-top: -24px;
     }
     .badge {
-      width: 150px;
+      width: 180px;
       aspect-ratio: 3.3 / 1;
       background-image: url('apprelease.png');
       background-size: 200% 100%;
@@ -191,9 +232,9 @@
       .copy-block { transform: none; }
       .cta-row { margin-top: 16px; }
       .visuals { justify-self: center; transform: none; gap: 0; }
-      .phones { max-width: 600px; }
-      .badges { gap: 10px; margin-top: -32px; }
-      .badge { width: 130px; }
+      .phones { max-width: 660px; }
+      .badges { gap: 14px; margin-top: -24px; justify-content: center; }
+      .badge { width: 160px; }
     }
     @media (prefers-reduced-motion: reduce) {
       .hero video { animation: none; }
@@ -257,21 +298,247 @@
       color: rgba(232,236,255,0.9);
       max-width: 760px;
     }
+    .p2p-copy {
+      font-size: 1.2rem;
+      line-height: 1.75;
+      max-width: 820px;
+      color: rgba(232,236,255,0.94);
+      margin-top: 6px;
+    }
+    /* Popup wallet (top-right, extension-like) */
+    .wallet-panel {
+      position: fixed;
+      top: 70px;
+      right: 24px;
+      width: 420px;
+      min-width: 320px;
+      max-width: 90vw;
+      max-height: 88vh;
+      overflow: auto;
+      background: #0a0d1a;
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 16px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.45);
+      padding: 14px 16px 18px;
+      z-index: 30;
+      transform: translateY(-12px) scale(0.97);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 160ms ease, transform 160ms ease;
+    }
+    .wallet-panel.active { opacity: 1; pointer-events: auto; transform: translateY(0) scale(1); animation: walletPop 220ms ease; }
+    .wallet-shell { display: grid; gap: 12px; }
+    .wallet-drag-handle { width: 100%; height: 14px; cursor: grab; }
+    .wallet-header {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+      gap: 10px;
+      padding: 4px 4px 8px;
+    }
+    .wallet-logo { width: 86px; height: auto; display: block; }
+    .wallet-meta { display: grid; gap: 4px; }
+    .wallet-name { font-weight: 700; letter-spacing: 0.04em; }
+    .wallet-balance { font-weight: 700; color: #a8ffe7; font-size: 1.05rem; }
+    .mini-btn {
+      padding: 6px 10px;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.16);
+      background: rgba(255,255,255,0.06);
+      color: #e8ecff;
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: transform 120ms ease, background 120ms ease;
+    }
+    .mini-btn:hover { transform: translateY(-1px); background: rgba(255,255,255,0.1); }
+    .wallet-actions { width: 100%; display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 8px; }
+    .wallet-actions .pill { padding: 11px 14px; font-size: 0.95rem; }
+    .wallet-view { display: none; }
+    .wallet-view.active { display: grid; gap: 10px; }
+    .wallet-status { font-size: 0.9rem; color: rgba(232,236,255,0.82); text-align: left; min-height: 18px; }
+    .wallet-form { width: 100%; display: grid; grid-template-columns: 1fr; gap: 10px; }
+    .wallet-form label { display: grid; gap: 6px; font-size: 0.9rem; color: rgba(232,236,255,0.86); }
+    .wallet-form input {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.18);
+      background: rgba(255,255,255,0.08);
+      color: #e8ecff;
+      font-family: inherit;
+    }
+    .wallet-form input:focus { outline: 2px solid rgba(127,96,249,0.6); border-color: transparent; }
+    .wallet-form-title { font-size: 1rem; font-weight: 700; text-align: left; }
+    .wallet-section {
+      padding: 10px 12px;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+      background: rgba(255,255,255,0.03);
+      display: grid;
+      gap: 8px;
+    }
+    .section-title { font-weight: 700; letter-spacing: 0.03em; font-size: 0.98rem; }
+    .section-heading { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+    .mono { font-family: 'Space Grotesk', monospace; word-break: break-all; color: #a8c7ff; font-size: 0.9rem; }
+    .inline-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+    .tag {
+      padding: 6px 10px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(255,255,255,0.05);
+      font-size: 0.85rem;
+      color: rgba(232,236,255,0.86);
+      cursor: pointer;
+    }
+    .contact-list { display: flex; flex-wrap: wrap; gap: 8px; }
+    .status-success { color: #9af0c4; }
+    .status-error { color: #ff9ca0; }
+    .qr-box { border: 1px dashed rgba(255,255,255,0.16); border-radius: 10px; padding: 10px; display: grid; gap: 8px; justify-items: center; }
+    .wallet-footnote { font-size: 0.82rem; color: rgba(232,236,255,0.65); text-align: center; width: 100%; }
+    .wallet-resize {
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      right: 6px;
+      bottom: 6px;
+      cursor: se-resize;
+      border-radius: 4px;
+      background: linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.18));
+      opacity: 0.65;
+    }
+    .wallet-resize:hover { opacity: 0.9; }
+    @keyframes walletPop { from { opacity: 0; transform: translateY(-14px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
   </style>
 </head>
 <body>
+  <div class="wallet-panel" id="wallet-panel" aria-hidden="true">
+    <div class="wallet-shell">
+      <div class="wallet-drag-handle" id="wallet-drag"></div>
+      <div class="wallet-header">
+        <img class="wallet-logo" src="divinelogo.png" alt="Divine logo">
+        <div class="wallet-meta">
+          <div class="wallet-name" id="wallet-name">Wallet</div>
+          <button class="mini-btn" id="rename-wallet">Rename</button>
+        </div>
+        <div class="wallet-balance" id="wallet-balance">--.-- SOL</div>
+      </div>
+
+      <div class="wallet-view active" id="wallet-auth">
+        <div class="wallet-actions">
+          <button class="pill pill-solid" id="mode-create" data-mode="create">Sign up</button>
+          <button class="pill pill-ghost" id="mode-login" data-mode="login">Login</button>
+        </div>
+        <div class="wallet-form" id="wallet-form">
+          <div class="wallet-form-title" id="form-title">Login with phone</div>
+          <label>Phone
+            <input id="w-phone" placeholder="+1234567890" />
+          </label>
+          <div class="inline-row">
+            <button class="pill" id="btn-request-otp">Get code</button>
+            <input id="w-otp" placeholder="6-digit code" style="max-width:140px" />
+            <button class="pill pill-solid" id="wallet-submit">Verify</button>
+          </div>
+        </div>
+        <div class="wallet-status" id="wallet-status">Select an option to continue.</div>
+      </div>
+
+      <div class="wallet-view" id="wallet-app">
+        <div class="wallet-section">
+          <div class="section-heading">
+            <div class="section-title">Wallet actions</div>
+            <button class="mini-btn" id="btn-logout">Logout</button>
+          </div>
+          <div class="wallet-actions">
+            <button class="pill pill-solid" id="btn-generate-wallet">Generate new wallet</button>
+            <button class="pill" id="btn-import-wallet">Import existing wallet</button>
+          </div>
+          <div class="wallet-form" id="import-form" style="display:none;">
+            <label>Secret key (base58)
+              <input id="import-secret" placeholder="Paste secret key" />
+            </label>
+            <div class="inline-row">
+              <button class="pill pill-solid" id="import-submit">Import</button>
+              <button class="pill" id="import-cancel">Cancel</button>
+            </div>
+          </div>
+          <div class="wallet-status" id="action-status"></div>
+        </div>
+
+        <div class="wallet-section">
+          <div class="section-heading">
+            <div class="section-title">Receive / address</div>
+            <button class="mini-btn" id="btn-refresh-balance">Refresh balance</button>
+          </div>
+          <div class="mono" id="current-address">No wallet yet.</div>
+          <div class="inline-row">
+            <button class="pill" id="btn-copy-address">Copy</button>
+            <button class="pill" id="btn-show-qr">Show QR</button>
+          </div>
+          <div class="qr-box" id="qr-box" style="display:none;">
+            <img id="qr-img" alt="QR code" style="width:160px;height:160px;object-fit:contain;" />
+            <div class="status" id="qr-status"></div>
+          </div>
+        </div>
+
+        <div class="wallet-section">
+          <div class="section-title">Send</div>
+          <div class="wallet-form">
+            <label>Recipient phone (E.164)
+              <input id="send-phone" placeholder="+1234567890" />
+            </label>
+            <label>To address (optional override)
+              <input id="send-to" placeholder="Recipient address" />
+            </label>
+            <label>Amount (SOL)
+              <input id="send-amount" type="number" min="0" step="0.0001" placeholder="0.10" />
+            </label>
+            <label>Memo (optional)
+              <input id="send-memo" placeholder="Thanks for dinner" />
+            </label>
+            <button class="pill pill-solid" id="btn-send">Send (demo)</button>
+          </div>
+          <div class="wallet-status" id="send-status"></div>
+        </div>
+
+        <div class="wallet-section">
+          <div class="section-heading">
+            <div class="section-title">Contacts</div>
+            <button class="mini-btn" id="btn-add-contact">Add</button>
+          </div>
+          <div class="contact-list" id="contact-list"></div>
+          <div class="wallet-form" id="contact-form" style="display:none;">
+            <label>Name
+              <input id="contact-name" placeholder="Alice" />
+            </label>
+            <label>Address
+              <input id="contact-address" placeholder="Destination address" />
+            </label>
+            <div class="inline-row">
+              <button class="pill pill-solid" id="contact-save">Save contact</button>
+              <button class="pill" id="contact-cancel">Cancel</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="wallet-footnote">Divine API v1.04 — demo wallet UI</div>
+    </div>
+    <div class="wallet-resize" id="wallet-resize" aria-hidden="true"></div>
+  </div>
   <section class="hero">
     <video src="topbg.mp4" autoplay muted loop playsinline preload="auto"></video>
     <div class="scrim" aria-hidden="true"></div>
     <div class="shell">
       <header>
-        <div class="brand">Dash Logo</div>
-        <nav>
-          <a href="#">Roadmap</a>
-          <a href="#">Docs</a>
-          <a href="#">FAQ</a>
-          <a href="#">Team</a>
-        </nav>
+        <div class="brand">
+          <img src="divinelogo.png" alt="Divine logo">
+        </div>
+        <nav></nav>
+        <div class="social-inline">
+          <a href="https://x.com/DivineNetworkX" target="_blank" rel="noreferrer" aria-label="X"><img class="social-icon x" src="xlogo.png" alt="X logo"></a>
+          <a href="https://t.me/TheDivineNetwork" target="_blank" rel="noreferrer" aria-label="Telegram"><img class="social-icon tg" src="telegramlogo.webp" alt="Telegram logo"></a>
+        </div>
       </header>
       <div class="grid">
         <div class="copy-block">
@@ -279,7 +546,8 @@
           <h1>Pairing cellular and blockchain technology</h1>
           <p class="lede"></p>
           <div class="cta-row">
-            <a class="pill" href="#">Whitepaper</a>
+            <a class="pill" href="docs.pdf" target="_blank" rel="noreferrer">Whitepaper</a>
+            <button class="pill pill-solid" id="open-wallet">Launch Web Wallet</button>
           </div>
         </div>
         <div class="visuals">
@@ -295,7 +563,8 @@
   <section class="long-gradient">
     <div class="section-block">
       <h2>Build. Ship. Scale.</h2>
-      <p>Scroll-ready section with a deep purple-to-blue gradient backdrop. Add your next block of content here—roadmap, feature highlights, or whatever comes next.</p>
+      <p class="p2p-copy">Link your phone to your wallet and skip long addresses—send crypto faster, safer, and more user-friendly.</p>
+      <p class="p2p-copy">Built on Solana for P2P simplicity: sign up with your number and move value in seconds.</p>
     </div>
     <div class="section-block">
       <h2>Roadmap</h2>
@@ -327,22 +596,524 @@
       </div>
     </div>
   </section>
+  <footer style="padding: 48px clamp(24px, 6vw, 96px); background: #040513; border-top: 1px solid rgba(255,255,255,0.06); display: grid; gap: 12px; justify-items: center; text-align: center;">
+    <div class="social-inline">
+      <a href="https://x.com/DivineNetworkX" target="_blank" rel="noreferrer" aria-label="X"><img class="social-icon x" src="xlogo.png" alt="X logo"></a>
+      <a href="https://t.me/TheDivineNetwork" target="_blank" rel="noreferrer" aria-label="Telegram"><img class="social-icon tg" src="telegramlogo.webp" alt="Telegram logo"></a>
+    </div>
+    <div style="color: rgba(232,236,255,0.9); font-size: 1.08rem; font-weight: 600; letter-spacing: 0.01em;">
+      hello@divinenetwork.io — Stockholm, Sweden
+    </div>
+  </footer>
   <script>
-    // Lightweight copy/inspect deterrents (not foolproof)
-    document.addEventListener('contextmenu', event => event.preventDefault());
-    document.addEventListener('keydown', event => {
-      if (event.ctrlKey || event.metaKey) {
-        const blocked = ['s', 'p', 'u', 'c', 'x'];
-        if (blocked.includes(event.key.toLowerCase())) {
-          event.preventDefault();
+    // Copy/inspect blocks removed to allow DevTools (F12) and right-click for debugging.
+    // Popup wallet logic
+    const panel = document.getElementById('wallet-panel');
+    const openWalletBtn = document.getElementById('open-wallet');
+    const modeCreateBtn = document.getElementById('mode-create');
+    const modeLoginBtn = document.getElementById('mode-login');
+    const statusEl = document.getElementById('wallet-status');
+    const form = document.getElementById('wallet-form');
+    const formTitle = document.getElementById('form-title');
+    const submitBtn = document.getElementById('wallet-submit');
+    const phoneInput = document.getElementById('w-phone');
+    const otpInput = document.getElementById('w-otp');
+    const requestOtpBtn = document.getElementById('btn-request-otp');
+    const dragHandle = document.getElementById('wallet-drag');
+    const walletAuthView = document.getElementById('wallet-auth');
+    const walletAppView = document.getElementById('wallet-app');
+    const walletNameEl = document.getElementById('wallet-name');
+    const renameBtn = document.getElementById('rename-wallet');
+    const balanceEl = document.getElementById('wallet-balance');
+    const btnLogout = document.getElementById('btn-logout');
+    const btnGenerate = document.getElementById('btn-generate-wallet');
+    const btnImport = document.getElementById('btn-import-wallet');
+    const importForm = document.getElementById('import-form');
+    const importSecret = document.getElementById('import-secret');
+    const importSubmit = document.getElementById('import-submit');
+    const importCancel = document.getElementById('import-cancel');
+    const actionStatus = document.getElementById('action-status');
+    const currentAddressEl = document.getElementById('current-address');
+    const btnCopyAddress = document.getElementById('btn-copy-address');
+    const btnShowQr = document.getElementById('btn-show-qr');
+    const qrBox = document.getElementById('qr-box');
+    const qrImg = document.getElementById('qr-img');
+    const qrStatus = document.getElementById('qr-status');
+    const btnRefreshBalance = document.getElementById('btn-refresh-balance');
+    const sendPhone = document.getElementById('send-phone');
+    const sendTo = document.getElementById('send-to');
+    const sendAmount = document.getElementById('send-amount');
+    const sendMemo = document.getElementById('send-memo');
+    const sendStatus = document.getElementById('send-status');
+    const btnSend = document.getElementById('btn-send');
+    const btnAddContact = document.getElementById('btn-add-contact');
+    const contactForm = document.getElementById('contact-form');
+    const contactName = document.getElementById('contact-name');
+    const contactAddress = document.getElementById('contact-address');
+    const contactSave = document.getElementById('contact-save');
+    const contactCancel = document.getElementById('contact-cancel');
+    const contactList = document.getElementById('contact-list');
+    const resizeHandle = document.getElementById('wallet-resize');
+
+    const dragState = { active: false, offsetX: 0, offsetY: 0 };
+    const resizeState = { active: false, startX: 0, startY: 0, startW: 0, startH: 0 };
+
+    const STORAGE_KEY = 'divine_wallet_v1';
+    const TOKEN_KEY = 'divine_token';
+
+    let mode = 'create';
+    let authenticated = false;
+    let state = loadState();
+
+    function loadState() {
+      try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) return JSON.parse(saved);
+      } catch (e) {}
+      return { walletName: 'My wallet', wallet: null, contacts: [], balance: 0, addresses: [] };
+    }
+
+    function saveState() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    }
+
+    const baseFromOrigin = () => {
+      const meta = document.querySelector('meta[name="divine-api-base"]')?.getAttribute('content');
+      const override = document.body?.dataset?.apiBase || meta || localStorage.getItem('divine_api_base');
+      if (override) return override;
+      if (location.origin.startsWith('http')) return location.origin;
+      return 'http://localhost:4000';
+    };
+
+    const api = async (path, { method = 'GET', body, auth = false } = {}) => {
+      const base = baseFromOrigin().replace(/\/$/, '');
+      if (!window.__divineApiLogged) {
+        console.info('[Divine Wallet] API base:', base);
+        window.__divineApiLogged = true;
+      }
+      const headers = { 'Content-Type': 'application/json' };
+      const token = localStorage.getItem(TOKEN_KEY);
+      if (auth && token) headers['Authorization'] = 'Bearer ' + token;
+      const res = await fetch(base + path, { method, headers, body });
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error((text || res.statusText) + ` (status ${res.status}, ${base + path})`);
+      }
+      return res.json();
+    };
+
+    const showPanel = (show) => {
+      panel.classList.toggle('active', show);
+      panel.setAttribute('aria-hidden', String(!show));
+    };
+
+    const setStatus = (el, message, type) => {
+      if (!el) return;
+      el.textContent = message;
+      el.classList.toggle('status-success', type === 'success');
+      el.classList.toggle('status-error', type === 'error');
+    };
+
+    const toggleView = (next) => {
+      walletAuthView.classList.toggle('active', next === 'auth');
+      walletAppView.classList.toggle('active', next === 'app');
+    };
+
+    const renderContacts = () => {
+      if (!contactList) return;
+      contactList.innerHTML = '';
+      if (!state.contacts || !state.contacts.length) {
+        const empty = document.createElement('div');
+        empty.textContent = 'No contacts yet.';
+        empty.style.color = 'rgba(232,236,255,0.7)';
+        empty.style.fontSize = '0.9rem';
+        contactList.appendChild(empty);
+        return;
+      }
+      state.contacts.forEach((c) => {
+        const btn = document.createElement('button');
+        btn.className = 'tag';
+        btn.textContent = `${c.name}`;
+        btn.title = c.address;
+        btn.addEventListener('click', () => {
+          if (sendTo) sendTo.value = c.address;
+        });
+        contactList.appendChild(btn);
+      });
+    };
+
+    const renderWallet = () => {
+      if (walletNameEl) walletNameEl.textContent = state.walletName || 'Wallet';
+      const balanceVal = Number(state.balance || 0).toFixed(3);
+      if (balanceEl) balanceEl.textContent = `${balanceVal} SOL`;
+      const address = state.wallet?.pub;
+      if (currentAddressEl) currentAddressEl.textContent = address || 'No wallet yet.';
+      if (qrBox) qrBox.style.display = 'none';
+      renderContacts();
+    };
+
+    const startDrag = (e) => {
+      dragState.active = true;
+      const rect = panel.getBoundingClientRect();
+      panel.style.right = 'auto';
+      panel.style.left = `${rect.left}px`;
+      panel.style.top = `${rect.top}px`;
+      dragState.offsetX = e.clientX - rect.left;
+      dragState.offsetY = e.clientY - rect.top;
+      document.addEventListener('mousemove', onDrag);
+      document.addEventListener('mouseup', endDrag);
+    };
+
+    const onDrag = (e) => {
+      if (!dragState.active) return;
+      const newLeft = e.clientX - dragState.offsetX;
+      const newTop = e.clientY - dragState.offsetY;
+      const maxLeft = window.innerWidth - panel.offsetWidth;
+      const maxTop = window.innerHeight - panel.offsetHeight;
+      panel.style.left = `${Math.min(Math.max(0, newLeft), Math.max(0, maxLeft))}px`;
+      panel.style.top = `${Math.min(Math.max(0, newTop), Math.max(0, maxTop))}px`;
+    };
+
+    const endDrag = () => {
+      dragState.active = false;
+      document.removeEventListener('mousemove', onDrag);
+      document.removeEventListener('mouseup', endDrag);
+    };
+
+    dragHandle?.addEventListener('mousedown', (e) => {
+      e.preventDefault();
+      startDrag(e);
+    });
+
+    const startResize = (e) => {
+      resizeState.active = true;
+      const rect = panel.getBoundingClientRect();
+      resizeState.startX = e.clientX;
+      resizeState.startY = e.clientY;
+      resizeState.startW = rect.width;
+      resizeState.startH = rect.height;
+      document.addEventListener('mousemove', onResize);
+      document.addEventListener('mouseup', endResize);
+    };
+
+    const onResize = (e) => {
+      if (!resizeState.active) return;
+      const deltaX = e.clientX - resizeState.startX;
+      const deltaY = e.clientY - resizeState.startY;
+      const minW = 320;
+      const maxW = Math.min(window.innerWidth - 24, 860);
+      const minH = 360;
+      const maxH = Math.min(window.innerHeight - 40, 960);
+      const nextW = Math.max(minW, Math.min(maxW, resizeState.startW + deltaX));
+      const nextH = Math.max(minH, Math.min(maxH, resizeState.startH + deltaY));
+      panel.style.width = `${nextW}px`;
+      panel.style.height = `${nextH}px`;
+    };
+
+    const endResize = () => {
+      resizeState.active = false;
+      document.removeEventListener('mousemove', onResize);
+      document.removeEventListener('mouseup', endResize);
+    };
+
+    resizeHandle?.addEventListener('mousedown', (e) => {
+      e.preventDefault();
+      startResize(e);
+    });
+
+    const setMode = (next) => {
+      mode = next;
+      modeCreateBtn.classList.toggle('active', next === 'create');
+      modeLoginBtn.classList.toggle('active', next === 'login');
+      if (formTitle) formTitle.textContent = 'Login with phone';
+      if (submitBtn) submitBtn.textContent = 'Verify';
+      if (statusEl) setStatus(statusEl, 'Enter phone then request & verify code.');
+      if (form) form.style.display = 'grid';
+    };
+
+    const loadAddresses = async () => {
+      try {
+        const res = await api('/addresses', { auth: true });
+        state.addresses = res.addresses || [];
+        saveState();
+      } catch (err) {
+        // ignore
+      }
+    };
+
+    const ensureAuthenticatedView = async () => {
+      const token = localStorage.getItem(TOKEN_KEY);
+      if (token) {
+        try {
+          await api('/me', { auth: true });
+          authenticated = true;
+          await loadAddresses();
+          toggleView('app');
+          renderWallet();
+          return;
+        } catch (err) {
+          localStorage.removeItem(TOKEN_KEY);
+          authenticated = false;
         }
       }
-      // Block F12 (devtools) and PrintScreen
-      if (event.key === 'F12' || event.key === 'PrintScreen') {
-        event.preventDefault();
+      authenticated = false;
+      toggleView('auth');
+    };
+
+    openWalletBtn?.addEventListener('click', async (e) => {
+      e.preventDefault();
+      showPanel(true);
+      setMode('login');
+      await ensureAuthenticatedView();
+      if (statusEl) setStatus(statusEl, authenticated ? 'Session restored.' : 'Request and verify OTP to continue.');
+      phoneInput.value = '';
+      otpInput.value = '';
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!panel.contains(e.target) && e.target !== openWalletBtn) {
+        showPanel(false);
       }
     });
 
+    const loadSolana = async () => {
+      if (window.__solanaMods) return window.__solanaMods;
+      const [{ Keypair, Transaction, PublicKey, Connection, clusterApiUrl }, bs58mod] = await Promise.all([
+        import('https://cdn.jsdelivr.net/npm/@solana/web3.js@1.98.4/lib/index.browser.esm.js'),
+        import('https://cdn.jsdelivr.net/npm/bs58@6.0.0/dist/bs58.mjs')
+      ]);
+      window.__solanaMods = { Keypair, Transaction, PublicKey, Connection, clusterApiUrl, bs58: bs58mod.default };
+      return window.__solanaMods;
+    };
+
+    const setWallet = async (kp, secretBase58) => {
+      state.wallet = { pub: kp.publicKey.toBase58(), sec: secretBase58 };
+      saveState();
+      renderWallet();
+      setStatus(actionStatus, 'Wallet ready locally.', 'success');
+      if (authenticated) {
+        try {
+          await api('/addresses', {
+            method: 'POST',
+            auth: true,
+            body: JSON.stringify({ address: state.wallet.pub, isDefault: true })
+          });
+          await loadAddresses();
+          setStatus(actionStatus, 'Wallet saved as default.', 'success');
+        } catch (err) {
+          setStatus(actionStatus, 'Saved locally; server address save failed.', 'error');
+        }
+      }
+    };
+
+    const refreshBalance = async () => {
+      const addr = state.wallet?.pub;
+      if (!addr) return setStatus(actionStatus, 'No wallet yet.', 'error');
+      try {
+        setStatus(actionStatus, 'Fetching balance...');
+        const { Connection, PublicKey, clusterApiUrl } = await loadSolana();
+        const connection = new Connection(clusterApiUrl('mainnet-beta'), 'confirmed');
+        const lamports = await connection.getBalance(new PublicKey(addr));
+        state.balance = lamports / 1_000_000_000;
+        saveState();
+        renderWallet();
+        setStatus(actionStatus, 'Balance updated.', 'success');
+      } catch (err) {
+        setStatus(actionStatus, 'Balance fetch failed: ' + err.message, 'error');
+      }
+    };
+
+    requestOtpBtn?.addEventListener('click', async () => {
+      const phone = phoneInput?.value.trim();
+      if (!phone) return setStatus(statusEl, 'Enter phone first.', 'error');
+      try {
+        setStatus(statusEl, 'Requesting OTP...');
+        await api('/auth/request-otp', { method: 'POST', body: JSON.stringify({ phone }) });
+        setStatus(statusEl, 'OTP sent. Check your phone.', 'success');
+      } catch (err) {
+        setStatus(statusEl, 'OTP failed: ' + err.message, 'error');
+      }
+    });
+
+    submitBtn?.addEventListener('click', async (e) => {
+      e.preventDefault();
+      const phone = phoneInput?.value.trim();
+      const code = otpInput?.value.trim();
+      if (!phone || !code) {
+        setStatus(statusEl, 'Phone and OTP are required.', 'error');
+        return;
+      }
+      try {
+        setStatus(statusEl, 'Verifying...');
+        const data = await api('/auth/verify-otp', { method: 'POST', body: JSON.stringify({ phone, code }) });
+        localStorage.setItem(TOKEN_KEY, data.token);
+        authenticated = true;
+        await loadAddresses();
+        setStatus(statusEl, 'Verified. Token saved.', 'success');
+        toggleView('app');
+        renderWallet();
+      } catch (err) {
+        setStatus(statusEl, 'Verify failed: ' + err.message, 'error');
+      }
+    });
+
+    btnLogout?.addEventListener('click', () => {
+      authenticated = false;
+      localStorage.removeItem(TOKEN_KEY);
+      setStatus(statusEl, 'Logged out.', '');
+      toggleView('auth');
+    });
+
+    btnGenerate?.addEventListener('click', async () => {
+      try {
+        setStatus(actionStatus, 'Generating...');
+        const { Keypair, bs58 } = await loadSolana();
+        const kp = Keypair.generate();
+        const secret = bs58.encode(kp.secretKey);
+        await setWallet(kp, secret);
+      } catch (err) {
+        setStatus(actionStatus, 'Generation failed: ' + err.message, 'error');
+      }
+    });
+
+    btnImport?.addEventListener('click', () => {
+      if (importForm) importForm.style.display = 'grid';
+      importSecret.value = '';
+      setStatus(actionStatus, 'Paste a base58 secret to import.');
+    });
+
+    importCancel?.addEventListener('click', () => {
+      if (importForm) importForm.style.display = 'none';
+      setStatus(actionStatus, 'Import canceled.');
+    });
+
+    importSubmit?.addEventListener('click', async () => {
+      const secret = importSecret?.value.trim();
+      if (!secret) return setStatus(actionStatus, 'Secret key required.', 'error');
+      try {
+        setStatus(actionStatus, 'Importing...');
+        const { Keypair, bs58 } = await loadSolana();
+        const decoded = bs58.decode(secret);
+        const kp = Keypair.fromSecretKey(Uint8Array.from(decoded));
+        await setWallet(kp, secret);
+        if (importForm) importForm.style.display = 'none';
+      } catch (err) {
+        setStatus(actionStatus, 'Import failed: ' + err.message, 'error');
+      }
+    });
+
+    btnCopyAddress?.addEventListener('click', async () => {
+      const addr = state.wallet?.pub;
+      if (!addr) return setStatus(actionStatus, 'No wallet yet.', 'error');
+      try {
+        await navigator.clipboard.writeText(addr);
+        setStatus(actionStatus, 'Address copied.', 'success');
+      } catch (err) {
+        setStatus(actionStatus, 'Copy failed: ' + err.message, 'error');
+      }
+    });
+
+    btnShowQr?.addEventListener('click', () => {
+      const addr = state.wallet?.pub;
+      if (!addr) return setStatus(actionStatus, 'No wallet yet.', 'error');
+      if (qrImg) qrImg.src = 'https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=' + encodeURIComponent(addr);
+      if (qrBox) qrBox.style.display = 'grid';
+      if (qrStatus) qrStatus.textContent = 'Scan to receive';
+    });
+
+    btnRefreshBalance?.addEventListener('click', () => {
+      refreshBalance();
+    });
+
+    const uint8ToBase64 = (u8) => {
+      let binary = '';
+      u8.forEach((b) => (binary += String.fromCharCode(b)));
+      return btoa(binary);
+    };
+
+    const signAndSubmit = async (prepareResp) => {
+      try {
+        const { Keypair, bs58, Transaction } = await loadSolana();
+        const secret = state.wallet?.sec;
+        if (!secret) throw new Error('Missing secret key');
+        const kp = Keypair.fromSecretKey(Uint8Array.from(bs58.decode(secret)));
+        const txBytes = Uint8Array.from(atob(prepareResp.transaction_base64), (c) => c.charCodeAt(0));
+        const tx = Transaction.from(txBytes);
+        tx.sign(kp);
+        const signedBase64 = uint8ToBase64(tx.serialize());
+        const submit = await api('/transfers/submit', {
+          method: 'POST',
+          auth: true,
+          body: JSON.stringify({ transfer_id: prepareResp.transfer_id, signed_transaction_base64: signedBase64 })
+        });
+        setStatus(sendStatus, `Submitted. Signature ${submit.signature}`, 'success');
+      } catch (err) {
+        setStatus(sendStatus, 'Submit failed: ' + err.message, 'error');
+      }
+    };
+
+    btnSend?.addEventListener('click', async () => {
+      const addr = state.wallet?.pub;
+      if (!addr) return setStatus(sendStatus, 'Create or import a wallet first.', 'error');
+      if (!authenticated) return setStatus(sendStatus, 'Login first to send.', 'error');
+      const toPhoneVal = sendPhone.value.trim();
+      const toAddrVal = sendTo.value.trim();
+      const amtSol = parseFloat(sendAmount.value || '0');
+      if (!toPhoneVal) return setStatus(sendStatus, 'Recipient phone required.', 'error');
+      if (Number.isNaN(amtSol) || amtSol <= 0) return setStatus(sendStatus, 'Amount must be positive.', 'error');
+      const lamports = Math.round(amtSol * 1_000_000_000);
+      const memoVal = sendMemo.value.trim();
+      try {
+        setStatus(sendStatus, 'Preparing transfer...');
+        const prep = await api('/transfers/prepare', {
+          method: 'POST',
+          auth: true,
+          body: JSON.stringify({
+            to_phone: toPhoneVal,
+            to_address: toAddrVal || undefined,
+            amount_lamports: lamports,
+            memo: memoVal || undefined,
+            from_address: addr
+          })
+        });
+        setStatus(sendStatus, 'Prepared. Signing...', 'success');
+        await signAndSubmit(prep);
+      } catch (err) {
+        setStatus(sendStatus, 'Prepare failed: ' + err.message, 'error');
+      }
+    });
+
+    renameBtn?.addEventListener('click', () => {
+      const next = prompt('Wallet name', state.walletName || 'Wallet');
+      if (!next) return;
+      state.walletName = next.trim().slice(0, 32) || 'Wallet';
+      saveState();
+      renderWallet();
+    });
+
+    btnAddContact?.addEventListener('click', () => {
+      if (contactForm) contactForm.style.display = 'grid';
+      contactName.value = '';
+      contactAddress.value = '';
+    });
+
+    contactCancel?.addEventListener('click', () => {
+      if (contactForm) contactForm.style.display = 'none';
+    });
+
+    contactSave?.addEventListener('click', () => {
+      const name = contactName.value.trim();
+      const address = contactAddress.value.trim();
+      if (!name || !address) return;
+      state.contacts = state.contacts || [];
+      state.contacts.push({ name, address });
+      saveState();
+      renderContacts();
+      if (contactForm) contactForm.style.display = 'none';
+    });
+
+    ensureAuthenticatedView();
+    renderWallet();
   </script>
 </body>
 </html>
