@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Solana Sign Helper</title>
+  <script src="https://unpkg.com/@solana/web3.js@1.95.2/lib/index.iife.min.js"></script>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 16px; background: #0b1224; color: #e8ecff; }
+    textarea, input { width: 100%; box-sizing: border-box; margin: 6px 0 12px; padding: 10px; font-family: monospace; }
+    button { padding: 10px 14px; font-weight: 700; cursor: pointer; }
+    .row { margin-bottom: 16px; }
+    .mono { font-family: monospace; }
+  </style>
+</head>
+<body>
+  <h2>Phantom Sign Helper</h2>
+  <div class="row">
+    <label>Unsigned transaction (base64)</label>
+    <textarea id="unsigned" rows="6" placeholder="transaction_base64 from /transfers/prepare"></textarea>
+  </div>
+  <div class="row">
+    <label>Transfer ID (for your reference)</label>
+    <input id="transferId" class="mono" placeholder="e.g. 21" />
+  </div>
+  <div class="row">
+    <label>Result: signed_transaction_base64</label>
+    <textarea id="signed" rows="6" readonly></textarea>
+  </div>
+  <div class="row">
+    <label>Bearer token (for submit)</label>
+    <textarea id="bearer" rows="2" placeholder="Bearer ey..."></textarea>
+  </div>
+  <div class="row">
+    <button id="btnSign">Connect + Sign in Phantom</button>
+    <button id="btnSubmit">Submit to backend</button>
+  </div>
+  <div id="log" class="mono"></div>
+
+  <script>
+    const log = (msg) => {
+      const div = document.getElementById('log');
+      div.textContent += msg + '\n';
+    };
+
+    document.getElementById('btnSign').onclick = async () => {
+      try {
+        const unsignedB64 = document.getElementById('unsigned').value.trim();
+        if (!unsignedB64) return alert('Paste unsigned base64 first');
+        if (!window.solanaWeb3) return alert('web3 not loaded');
+        const wallet = window.solana;
+        if (!wallet?.isPhantom) return alert('Phantom not found');
+        const { publicKey } = await wallet.connect({ onlyIfTrusted: false });
+        log('Wallet: ' + publicKey.toBase58());
+
+        const raw = Uint8Array.from(atob(unsignedB64), (c) => c.charCodeAt(0));
+        const tx = solanaWeb3.Transaction.from(raw);
+        const required = tx.feePayer.toBase58();
+        log('Required signer: ' + required);
+        if (required !== publicKey.toBase58()) {
+          alert('Wallet mismatch: switch Phantom to ' + required + ' or re-prepare using this wallet');
+          return;
+        }
+
+        const signedTx = await wallet.signTransaction(tx);
+        const signedRaw = signedTx.serialize();
+        const signedB64 = btoa(String.fromCharCode(...signedRaw));
+        document.getElementById('signed').value = signedB64;
+        log('Signed length: ' + signedB64.length);
+        alert('Signed! You can now click Submit (or copy to PowerShell).');
+      } catch (err) {
+        console.error(err);
+        alert('Error: ' + err.message);
+      }
+    };
+
+    document.getElementById('btnSubmit').onclick = async () => {
+      try {
+        const transferId = document.getElementById('transferId').value.trim();
+        const signedB64 = document.getElementById('signed').value.trim();
+        const bearer = document.getElementById('bearer').value.trim();
+        if (!transferId || !signedB64 || !bearer) {
+          alert('Need transferId, signed tx, and bearer token');
+          return;
+        }
+        const res = await fetch('http://localhost:4000/transfers/submit', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: bearer
+          },
+          body: JSON.stringify({ transfer_id: Number(transferId), signed_transaction_base64: signedB64 })
+        });
+        const text = await res.text();
+        log('Submit status ' + res.status + ' ' + res.statusText + ' body: ' + text);
+        alert('Submit finished. See log below.');
+      } catch (err) {
+        console.error(err);
+        alert('Submit error: ' + err.message);
+      }
+    };
+  </script>
+</body>
+</html>
