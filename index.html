@@ -415,7 +415,7 @@
   <div class="wallet-panel" id="wallet-panel" aria-hidden="true">
     <div class="wallet-shell">
       <div class="wallet-drag-handle" id="wallet-drag"></div>
-      <div class="wallet-header">
+      <div class="wallet-header" id="wallet-header">
         <img class="wallet-logo" src="divinelogo.png" alt="Divine logo">
         <div class="wallet-meta">
           <div class="wallet-name" id="wallet-name">Wallet</div>
@@ -425,11 +425,6 @@
       </div>
 
       <div class="wallet-view active" id="wallet-auth">
-        <div class="wallet-actions">
-          <button class="pill pill-solid" id="mode-create" data-mode="create">Sign up</button>
-          <button class="pill pill-ghost" id="mode-login" data-mode="login">Login</button>
-          <button class="pill" id="mode-password" data-mode="password">Password login</button>
-        </div>
         <div class="wallet-section" id="auth-landing">
           <div class="section-heading" style="justify-content:center; text-align:center; gap:12px;">
             <img class="wallet-logo" src="divinelogo.png" alt="Divine logo" style="margin:0 auto;" />
@@ -686,6 +681,7 @@
     // Popup wallet logic
     const panel = document.getElementById('wallet-panel');
     const openWalletBtn = document.getElementById('open-wallet');
+    const walletHeader = document.getElementById('wallet-header');
     const statusEl = document.getElementById('wallet-status');
     const form = document.getElementById('wallet-form');
     const submitBtn = document.getElementById('wallet-submit');
@@ -819,6 +815,7 @@
     const toggleView = (next) => {
       walletAuthView.classList.toggle('active', next === 'auth');
       walletAppView.classList.toggle('active', next === 'app');
+      if (walletHeader) walletHeader.style.display = next === 'app' ? 'grid' : 'none';
     };
 
     const renderContacts = () => {
