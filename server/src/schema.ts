@@ -16,8 +16,15 @@ export const addAddressSchema = z.object({
   isDefault: z.boolean().optional()
 });
 
-export const transferSchema = z.object({
+export const prepareTransferSchema = z.object({
   to_phone: phoneSchema,
+  to_address: z.string().min(10).optional(),
   amount_lamports: z.bigint().or(z.number().int().positive()),
-  memo: z.string().max(120).optional()
+  memo: z.string().max(120).optional(),
+  from_address: z.string().min(10).optional()
+});
+
+export const submitTransferSchema = z.object({
+  transfer_id: z.number().int().positive(),
+  signed_transaction_base64: z.string().min(20)
 });

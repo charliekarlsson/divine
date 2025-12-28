@@ -4,10 +4,11 @@ import jwt from 'jsonwebtoken';
 import { config } from './config.js';
 import { InMemoryOtpStore } from './otpStore.js';
 import { PgOtpStore } from './pgOtpStore.js';
-import { requestOtpSchema, verifyOtpSchema, addAddressSchema, transferSchema } from './schema.js';
+import { requestOtpSchema, verifyOtpSchema, addAddressSchema, prepareTransferSchema, submitTransferSchema } from './schema.js';
 import { makeTwilioClient, sendOtpSms } from './twilioClient.js';
 import { getPool, runMigrations } from './db.js';
 import { requireAuth } from './auth.js';
+import { buildUnsignedTransfer, relaySignedTransaction, serializeUnsignedTransaction } from './solana.js';
 
 let otpStore: InMemoryOtpStore | PgOtpStore;
 const useDb = !!process.env.DATABASE_URL;
@@ -25,7 +26,22 @@ if (useDb) {
 const twilioClient = config.twilio.accountSid ? makeTwilioClient() : null;
 
 const fastify = Fastify({ logger: true });
-fastify.register(cors, { origin: true });
+fastify.register(cors, {
+  origin: true,
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS', 'HEAD'],
+  credentials: true
+});
+
+// Fallback OPTIONS handler to satisfy preflight even if a route is missing.
+fastify.options('*', async (request, reply) => {
+  reply
+    .header('Access-Control-Allow-Origin', request.headers.origin || '*')
+    .header('Access-Control-Allow-Methods', 'GET,POST,PUT,PATCH,DELETE,OPTIONS,HEAD')
+    .header('Access-Control-Allow-Headers', request.headers['access-control-request-headers'] || 'Content-Type, Authorization')
+    .header('Access-Control-Allow-Credentials', 'true')
+    .code(204)
+    .send();
+});
 
 fastify.post('/auth/request-otp', async (request, reply) => {
   const parsed = requestOtpSchema.safeParse(request.body);
@@ -119,13 +135,13 @@ fastify.get('/addresses', async (request, reply) => {
   return reply.send({ ok: true, addresses: res.rows });
 });
 
-fastify.post('/transfers', async (request, reply) => {
+fastify.post('/transfers/prepare', async (request, reply) => {
   const ctx = requireAuth(request, reply);
   if (!ctx) return;
   if (!useDb) return reply.code(500).send({ error: 'Database required' });
-  const parsed = transferSchema.safeParse(request.body);
+  const parsed = prepareTransferSchema.safeParse(request.body);
   if (!parsed.success) return reply.code(400).send({ error: parsed.error.format() });
-  const { to_phone, amount_lamports } = parsed.data;
+  const { to_phone, amount_lamports, memo } = parsed.data;
   const pool = getPool();
 
   // Resolve sender and receiver
@@ -133,20 +149,97 @@ fastify.post('/transfers', async (request, reply) => {
   const senderId = senderRes.rows[0]?.id ?? null;
   const receiverRes = await pool.query('SELECT id FROM users WHERE phone_e164 = $1', [to_phone]);
   const receiverId = receiverRes.rows[0]?.id ?? null;
-  let toAddress: string | null = null;
-  if (receiverId) {
+  let fromAddress: string | null = parsed.data.from_address ?? null;
+  if (senderId && !fromAddress) {
+    const fromAddrRes = await pool.query('SELECT address FROM addresses WHERE user_id = $1 AND is_default = TRUE LIMIT 1', [senderId]);
+    fromAddress = fromAddrRes.rows[0]?.address ?? null;
+  }
+  let toAddress: string | null = parsed.data.to_address ?? null;
+  if (!toAddress && receiverId) {
     const addrRes = await pool.query('SELECT address FROM addresses WHERE user_id = $1 AND is_default = TRUE LIMIT 1', [receiverId]);
     toAddress = addrRes.rows[0]?.address ?? null;
   }
 
-  // Stub transfer record; no on-chain send yet
-  const insert = await pool.query(
-    `INSERT INTO transfers (from_user, to_user, to_phone, to_address, amount_lamports, status)
-     VALUES ($1, $2, $3, $4, $5, $6) RETURNING id`,
-    [senderId, receiverId, to_phone, toAddress, BigInt(amount_lamports as any), 'pending']
-  );
+  if (!fromAddress) {
+    return reply.code(400).send({ error: 'Sender address not found; set a default address first' });
+  }
+  if (!toAddress) {
+    return reply.code(400).send({ error: 'Recipient address not found' });
+  }
 
-  return reply.send({ ok: true, transfer_id: insert.rows[0].id, to_address: toAddress, status: 'pending' });
+  const lamportsBig = BigInt(amount_lamports as any);
+  if (lamportsBig <= 0n) {
+    return reply.code(400).send({ error: 'Amount must be positive' });
+  }
+  if (lamportsBig > BigInt(Number.MAX_SAFE_INTEGER)) {
+    return reply.code(400).send({ error: 'Amount too large' });
+  }
+  let unsignedTxBase64: string;
+  let recentBlockhash: string;
+  try {
+    const { tx, recentBlockhash: bh } = await buildUnsignedTransfer(fromAddress, toAddress, lamportsBig, memo);
+    unsignedTxBase64 = serializeUnsignedTransaction(tx);
+    recentBlockhash = bh;
+  } catch (err) {
+    request.log.error({ err }, 'Failed to build unsigned transfer');
+    return reply.code(500).send({ error: 'Failed to prepare transfer' });
+  }
+
+  const client = await pool.connect();
+  let transferId: number | null = null;
+  try {
+    await client.query('BEGIN');
+    const insert = await client.query(
+      `INSERT INTO transfers (from_user, to_user, from_address, to_phone, to_address, amount_lamports, status, memo, prepared_tx_base64)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id`,
+      [senderId, receiverId, fromAddress, to_phone, toAddress, lamportsBig, 'prepared', memo ?? null, unsignedTxBase64]
+    );
+    transferId = insert.rows[0].id;
+    await client.query('COMMIT');
+  } catch (err) {
+    await client.query('ROLLBACK');
+    client.release();
+    request.log.error({ err }, 'Failed to record prepared transfer');
+    return reply.code(500).send({ error: 'Failed to record transfer' });
+  }
+
+  client.release();
+  return reply.send({
+    ok: true,
+    transfer_id: transferId,
+    from_address: fromAddress,
+    to_address: toAddress,
+    recent_blockhash: recentBlockhash,
+    transaction_base64: unsignedTxBase64
+  });
+});
+
+fastify.post('/transfers/submit', async (request, reply) => {
+  const ctx = requireAuth(request, reply);
+  if (!ctx) return;
+  if (!useDb) return reply.code(500).send({ error: 'Database required' });
+  const parsed = submitTransferSchema.safeParse(request.body);
+  if (!parsed.success) return reply.code(400).send({ error: parsed.error.format() });
+  const { transfer_id, signed_transaction_base64 } = parsed.data;
+  const pool = getPool();
+
+  const rowRes = await pool.query(
+    `SELECT id, status FROM transfers WHERE id = $1 AND from_user = (SELECT id FROM users WHERE phone_e164 = $2)`,
+    [transfer_id, ctx.phone]
+  );
+  const transferRow = rowRes.rows[0];
+  if (!transferRow) return reply.code(404).send({ error: 'Transfer not found for user' });
+  if (transferRow.status !== 'prepared') return reply.code(400).send({ error: 'Transfer not in prepared state' });
+
+  try {
+    const signature = await relaySignedTransaction(signed_transaction_base64);
+    await pool.query('UPDATE transfers SET status = $1, tx_signature = $2 WHERE id = $3', ['succeeded', signature, transfer_id]);
+    return reply.send({ ok: true, transfer_id, status: 'succeeded', signature });
+  } catch (err) {
+    request.log.error({ err }, 'Broadcast failed');
+    await pool.query('UPDATE transfers SET status = $1 WHERE id = $2', ['failed', transfer_id]);
+    return reply.code(502).send({ error: 'On-chain broadcast failed' });
+  }
 });
 
 const start = async () => {

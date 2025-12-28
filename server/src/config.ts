@@ -20,7 +20,11 @@ export const config = {
     ttlMs: Number(process.env.OTP_TTL_MS || 5 * 60 * 1000),
     maxAttempts: Number(process.env.OTP_MAX_ATTEMPTS || 5)
   },
-  jwtSecret: process.env.JWT_SECRET || 'dev-secret-change-me'
+  jwtSecret: process.env.JWT_SECRET || 'dev-secret-change-me',
+  solana: {
+    rpcUrl: process.env.SOLANA_RPC_URL || 'https://api.mainnet-beta.solana.com',
+    secretKey: process.env.SOLANA_SECRET_KEY || ''
+  }
 };
 
 export function assertTwilioConfigured() {
