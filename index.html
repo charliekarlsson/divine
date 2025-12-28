@@ -1021,6 +1021,17 @@
     const loadSolana = async () => {
       if (window.__solanaMods) return window.__solanaMods;
       const solanaPromise = import('https://cdn.jsdelivr.net/npm/@solana/web3.js@1.98.4/lib/index.browser.esm.js');
+      if (typeof Buffer === 'undefined') {
+        try {
+          const bufMod = await import('https://cdn.jsdelivr.net/npm/buffer@6.0.3/index.js');
+          if (bufMod?.Buffer) {
+            window.Buffer = bufMod.Buffer;
+            globalThis.Buffer = bufMod.Buffer;
+          }
+        } catch (err) {
+          console.warn('Buffer polyfill load failed', err);
+        }
+      }
       let bs58mod;
       const bs58Sources = [
         'https://cdn.jsdelivr.net/npm/bs58@6.0.0/+esm',
