@@ -878,10 +878,15 @@
 
     const loadSolana = async () => {
       if (window.__solanaMods) return window.__solanaMods;
-      const [{ Keypair, Transaction, PublicKey, Connection, clusterApiUrl }, bs58mod] = await Promise.all([
-        import('https://cdn.jsdelivr.net/npm/@solana/web3.js@1.98.4/lib/index.browser.esm.js'),
-        import('https://cdn.jsdelivr.net/npm/bs58@6.0.0/dist/bs58.mjs')
-      ]);
+      const solanaPromise = import('https://cdn.jsdelivr.net/npm/@solana/web3.js@1.98.4/lib/index.browser.esm.js');
+      let bs58mod;
+      try {
+        bs58mod = await import('https://esm.sh/bs58@6.0.0');
+      } catch (err) {
+        console.warn('Primary bs58 import failed, trying jsdelivr', err);
+        bs58mod = await import('https://cdn.jsdelivr.net/npm/bs58@6.0.0/dist/bs58.mjs');
+      }
+      const { Keypair, Transaction, PublicKey, Connection, clusterApiUrl } = await solanaPromise;
       window.__solanaMods = { Keypair, Transaction, PublicKey, Connection, clusterApiUrl, bs58: bs58mod.default };
       return window.__solanaMods;
     };
