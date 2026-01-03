@@ -4,6 +4,7 @@ import { config } from './config.js';
 
 export interface AuthContext {
   phone?: string;
+  email?: string;
   username?: string;
   uid?: number;
 }
@@ -19,6 +20,7 @@ export function requireAuth(request: FastifyRequest, reply: FastifyReply): AuthC
     const payload = jwt.verify(token, config.jwtSecret) as any;
     return {
       phone: payload.phone as string | undefined,
+      email: payload.email as string | undefined,
       username: payload.username as string | undefined,
       uid: payload.uid as number | undefined
     };

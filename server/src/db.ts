@@ -23,6 +23,7 @@ export async function runMigrations() {
       CREATE TABLE IF NOT EXISTS users (
         id SERIAL PRIMARY KEY,
         phone_e164 TEXT UNIQUE,
+        email TEXT UNIQUE,
         username TEXT UNIQUE,
         password_hash TEXT,
         created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
@@ -31,6 +32,7 @@ export async function runMigrations() {
     await client.query('ALTER TABLE users ADD COLUMN IF NOT EXISTS password_hash TEXT;');
     await client.query('ALTER TABLE users ADD COLUMN IF NOT EXISTS username TEXT UNIQUE;');
     await client.query('ALTER TABLE users ALTER COLUMN phone_e164 DROP NOT NULL;');
+    await client.query('ALTER TABLE users ADD COLUMN IF NOT EXISTS email TEXT UNIQUE;');
     await client.query(`
       CREATE TABLE IF NOT EXISTS otps (
         phone_e164 TEXT PRIMARY KEY,
@@ -70,6 +72,7 @@ export async function runMigrations() {
     await client.query(`ALTER TABLE transfers ADD COLUMN IF NOT EXISTS from_address TEXT;`);
     await client.query(`ALTER TABLE transfers ADD COLUMN IF NOT EXISTS memo TEXT;`);
     await client.query(`ALTER TABLE transfers ADD COLUMN IF NOT EXISTS prepared_tx_base64 TEXT;`);
+    await client.query(`ALTER TABLE transfers ALTER COLUMN to_phone DROP NOT NULL;`);
 
     await client.query(`
       CREATE TABLE IF NOT EXISTS contacts (

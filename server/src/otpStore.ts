@@ -7,17 +7,17 @@ export type OtpRecord = {
 };
 
 export interface OtpStore {
-  issue(phoneE164: string, code: string, ttlMs: number): Promise<string> | string;
-  verify(phoneE164: string, code: string, maxAttempts: number): Promise<boolean> | boolean;
+  issue(identifier: string, code: string, ttlMs: number): Promise<string> | string;
+  verify(identifier: string, code: string, maxAttempts: number): Promise<boolean> | boolean;
 }
 
 // Simple in-memory store for development. Swap to Redis in production.
 export class InMemoryOtpStore implements OtpStore {
   private store = new Map<string, OtpRecord>();
 
-  issue(phoneE164: string, code: string, ttlMs: number): string {
+  issue(identifier: string, code: string, ttlMs: number): string {
     const id = nanoid();
-    this.store.set(phoneE164, {
+    this.store.set(identifier, {
       code,
       expiresAt: Date.now() + ttlMs,
       attempts: 0
@@ -25,23 +25,23 @@ export class InMemoryOtpStore implements OtpStore {
     return id;
   }
 
-  verify(phoneE164: string, code: string, maxAttempts: number): boolean {
-    const rec = this.store.get(phoneE164);
+  verify(identifier: string, code: string, maxAttempts: number): boolean {
+    const rec = this.store.get(identifier);
     if (!rec) return false;
     if (Date.now() > rec.expiresAt) {
-      this.store.delete(phoneE164);
+      this.store.delete(identifier);
       return false;
     }
     if (rec.attempts >= maxAttempts) {
-      this.store.delete(phoneE164);
+      this.store.delete(identifier);
       return false;
     }
     rec.attempts += 1;
     if (rec.code === code) {
-      this.store.delete(phoneE164);
+      this.store.delete(identifier);
       return true;
     }
-    this.store.set(phoneE164, rec);
+    this.store.set(identifier, rec);
     return false;
   }
 }

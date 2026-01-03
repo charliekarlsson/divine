@@ -1,17 +1,34 @@
 import { z } from 'zod';
 
 export const phoneSchema = z.string().regex(/^\+?[1-9]\d{6,14}$/i, 'Phone must be E.164');
+export const emailSchema = z.string().email('Email must be valid');
 
 export const usernameSchema = z.string().min(3).max(32).regex(/^[a-zA-Z0-9._-]+$/, 'Username is alphanumeric with . _ -');
 
-export const requestOtpSchema = z.object({
-  phone: phoneSchema
-});
+export const requestOtpSchema = z
+  .object({
+    phone: phoneSchema.optional(),
+    email: emailSchema.optional()
+  })
+  .superRefine((val, ctx) => {
+    if (!val.phone && !val.email) {
+      ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'Provide a phone or an email.', path: ['phone'] });
+      ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'Provide a phone or an email.', path: ['email'] });
+    }
+  });
 
-export const verifyOtpSchema = z.object({
-  phone: phoneSchema,
-  code: z.string().length(6)
-});
+export const verifyOtpSchema = z
+  .object({
+    phone: phoneSchema.optional(),
+    email: emailSchema.optional(),
+    code: z.string().length(6)
+  })
+  .superRefine((val, ctx) => {
+    if (!val.phone && !val.email) {
+      ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'Provide a phone or an email.', path: ['phone'] });
+      ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'Provide a phone or an email.', path: ['email'] });
+    }
+  });
 
 export const passwordAuthSchema = z.object({
   phone: phoneSchema,
@@ -40,11 +57,16 @@ export const contactSchema = z.object({
 });
 
 export const prepareTransferSchema = z.object({
-  to_phone: phoneSchema,
+  to_phone: phoneSchema.optional(),
   to_address: z.string().min(10).optional(),
   amount_lamports: z.bigint().or(z.number().int().positive()),
   memo: z.string().max(120).optional(),
   from_address: z.string().min(10).optional()
+}).superRefine((val, ctx) => {
+  if (!val.to_phone && !val.to_address) {
+    ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'Provide a recipient phone or wallet address.', path: ['to_phone'] });
+    ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'Provide a recipient phone or wallet address.', path: ['to_address'] });
+  }
 });
 
 export const submitTransferSchema = z.object({

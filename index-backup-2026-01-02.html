@@ -39,22 +39,22 @@
       gap: 6px;
       padding: 12px 16px;
       border-radius: 999px;
-      border: none;
-      background: #282829;
+      border: 1px solid rgba(255,255,255,0.2);
+      background: rgba(255,255,255,0.04);
       color: #e8ecff;
       font-weight: 700;
       letter-spacing: 0.01em;
       cursor: pointer;
-      transition: transform 140ms ease, background 140ms ease;
+      transition: transform 140ms ease, background 140ms ease, border-color 140ms ease;
     }
-    .pill:hover { transform: translateY(-1px); background: #323234; }
+    .pill:hover { transform: translateY(-1px); border-color: rgba(255,255,255,0.32); }
     .pill-solid {
-      background: #282829;
-      color: #e8ecff;
-      border: none;
-      box-shadow: none;
+      background: linear-gradient(120deg, #8cffdb 0%, #7f60f9 100%);
+      color: #0b1021;
+      border-color: transparent;
+      box-shadow: 0 12px 26px rgba(0,0,0,0.35);
     }
-    .pill-solid:hover { background: #323234; }
+    .pill-solid:hover { filter: brightness(1.05); }
 
     .hero {
       position: relative;
@@ -292,9 +292,9 @@
       position: fixed;
       top: 70px;
       right: 24px;
-      width: 440px;
+      width: 420px;
       min-width: 320px;
-      max-width: min(90vw, 500px);
+      max-width: min(90vw, 480px);
       height: auto;
       max-height: 90vh;
       overflow: visible;
@@ -344,15 +344,15 @@
     .mini-btn {
       padding: 6px 10px;
       border-radius: 10px;
-      border: none;
-      background: #282829;
+      border: 1px solid rgba(255,255,255,0.16);
+      background: rgba(255,255,255,0.06);
       color: #e8ecff;
       font-weight: 600;
       font-size: 0.85rem;
       cursor: pointer;
       transition: transform 120ms ease, background 120ms ease;
     }
-    .mini-btn:hover { transform: translateY(-1px); background: #323234; }
+    .mini-btn:hover { transform: translateY(-1px); background: rgba(255,255,255,0.1); }
     .wallet-actions { width: 100%; display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 8px; }
     .wallet-actions .pill { padding: 11px 14px; font-size: 0.95rem; }
     .wallet-view { display: none; }
@@ -363,7 +363,7 @@
       max-height: 90vh;
       overflow-y: auto;
       padding: 0;
-      background: #1c1c1e;
+      background: #060814;
       border-radius: 18px;
       box-shadow: 0 26px 60px rgba(0,0,0,0.55);
       border: 1px solid rgba(255,255,255,0.06);
@@ -412,7 +412,6 @@
       color: rgba(232,236,255,0.8);
     }
     .wallet-status { font-size: 0.9rem; color: rgba(232,236,255,0.82); text-align: left; min-height: 18px; }
-    #action-status { display: none; }
     .wallet-form { width: 100%; display: grid; grid-template-columns: 1fr; gap: 10px; }
     .wallet-form label { display: grid; gap: 6px; font-size: 0.9rem; color: rgba(232,236,255,0.86); }
     .wallet-form input {
@@ -440,15 +439,8 @@
       display: grid;
       gap: 8px;
     }
-    /* Make auth panels match the main wallet surface */
-    #wallet-auth .wallet-section {
-      background: #1c1c1e;
-      border: 1px solid rgba(255,255,255,0.08);
-      box-shadow: 0 26px 60px rgba(0,0,0,0.55);
-    }
     .section-title { font-weight: 700; letter-spacing: 0.03em; font-size: 0.98rem; }
     .section-heading { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
-    .section-actions { display: flex; align-items: center; gap: 8px; }
     .mono { font-family: 'Space Grotesk', monospace; word-break: break-all; color: #a8c7ff; font-size: 0.9rem; }
     .inline-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
     .tag {
@@ -460,39 +452,7 @@
       color: rgba(232,236,255,0.86);
       cursor: pointer;
     }
-    .contact-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; align-items: start; }
-    .contact-chip {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 10px 12px;
-      border-radius: 12px;
-      border: 1px solid rgba(255,255,255,0.12);
-      background: rgba(255,255,255,0.04);
-      color: rgba(232,236,255,0.9);
-      text-align: left;
-      cursor: pointer;
-      transition: background 120ms ease, border-color 120ms ease;
-    }
-    .contact-chip:hover { background: rgba(255,255,255,0.07); border-color: rgba(255,255,255,0.2); }
-    .contact-avatar {
-      width: 42px;
-      height: 42px;
-      border-radius: 50%;
-      background: #7e77d2;
-      display: grid;
-      place-items: center;
-      color: #0a0b12;
-      font-weight: 800;
-      letter-spacing: 0.02em;
-      border: 1px solid rgba(255,255,255,0.18);
-    }
-    .contact-meta { display: grid; line-height: 1.2; }
-    .contact-name { font-weight: 700; }
-    .contact-sub { font-size: 0.86rem; color: rgba(232,236,255,0.7); }
-    #tab-contacts { grid-template-columns: 1fr; gap: 12px; padding: 18px; }
-    #tab-contacts .section-heading { align-items: flex-start; }
-    #contact-list { width: 100%; min-height: 120px; padding: 6px 0; }
+    .contact-list { display: flex; flex-wrap: wrap; gap: 8px; }
     .status-success { color: #9af0c4; }
     .status-error { color: #ff9ca0; }
     .qr-box { border: 1px dashed rgba(255,255,255,0.16); border-radius: 10px; padding: 10px; display: grid; gap: 8px; justify-items: center; }
@@ -562,47 +522,34 @@
     }
     .phantom-id { display: flex; gap: 10px; align-items: center; }
     .phantom-avatar {
-      width: 54px;
-      height: 54px;
+      width: 40px;
+      height: 40px;
       border-radius: 12px;
-      background: transparent;
+      background: linear-gradient(140deg, #7f60f9, #8cffdb);
       display: grid;
       place-items: center;
-      overflow: hidden;
-    }
-    .phantom-avatar img {
-      width: 115%;
-      height: 115%;
-      object-fit: contain;
+      font-weight: 800;
+      color: #0b1021;
+      box-shadow: 0 8px 22px rgba(0,0,0,0.35);
     }
     .phantom-id-text { display: grid; gap: 4px; }
     .phantom-title { font-weight: 800; letter-spacing: 0.02em; }
     .phantom-address-row { display: flex; align-items: center; gap: 6px; }
-    .phantom-address {
-      font-size: 0.92rem;
-      color: rgba(232,236,255,0.8);
-      cursor: pointer;
-      user-select: none;
-    }
-    .phantom-address.empty {
-      cursor: default;
-      user-select: text;
-      opacity: 0.6;
-    }
+    .phantom-address { font-size: 0.92rem; color: rgba(232,236,255,0.8); }
     .phantom-actions { display: flex; gap: 6px; }
     .icon-btn {
       width: 34px;
       height: 34px;
       border-radius: 10px;
-      border: none;
-      background: #282829;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.06);
       color: #e8ecff;
       display: grid;
       place-items: center;
       cursor: pointer;
-      transition: transform 120ms ease, background 120ms ease;
+      transition: transform 120ms ease, background 120ms ease, border-color 120ms ease;
     }
-    .icon-btn:hover { transform: translateY(-1px); background: #323234; }
+    .icon-btn:hover { transform: translateY(-1px); background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.2); }
 
     .phantom-balance-card {
       border-radius: 16px;
@@ -623,9 +570,9 @@
       gap: 10px;
     }
     .phantom-action {
-      border: none;
+      border: 1px solid rgba(255,255,255,0.1);
       border-radius: 14px;
-      background: #282829;
+      background: rgba(255,255,255,0.05);
       color: #e8ecff;
       padding: 12px 10px;
       display: grid;
@@ -633,18 +580,11 @@
       justify-items: center;
       font-weight: 700;
       cursor: pointer;
-      transition: transform 120ms ease, background 120ms ease;
+      transition: transform 120ms ease, background 120ms ease, border-color 120ms ease;
     }
-    .phantom-action .icon { font-size: 1.2rem; color: #7e77d2; }
-    .phantom-action:hover { transform: translateY(-1px); background: #323234; }
-    .phantom-action-muted {
-      background: #282829;
-      color: rgba(232,236,255,0.7);
-      opacity: 1;
-      pointer-events: none;
-      cursor: default;
-    }
-    .phantom-action-muted .icon { color: #a8a8aa; }
+    .phantom-action .icon { font-size: 1.2rem; }
+    .phantom-action:hover { transform: translateY(-1px); background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.18); }
+    .phantom-action-muted { opacity: 0.8; }
 
     .phantom-token-list { display: grid; gap: 10px; }
     .phantom-token-row {
@@ -685,23 +625,22 @@
 
     .phantom-foot-nav {
       display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
+      grid-template-columns: repeat(5, minmax(0, 1fr));
       align-items: center;
-      gap: 8px;
-      padding: 12px 10px 6px;
+      gap: 6px;
+      padding: 10px 8px 4px;
       border-top: 1px solid rgba(255,255,255,0.06);
-      color: rgba(232,236,255,0.82);
-      font-size: 1.05rem;
+      color: rgba(232,236,255,0.7);
+      font-size: 0.85rem;
     }
     .phantom-foot-nav button {
       background: none;
       border: none;
       color: inherit;
       cursor: pointer;
-      padding: 10px 8px;
-      border-radius: 14px;
+      padding: 8px 6px;
+      border-radius: 12px;
       transition: background 120ms ease;
-      font-size: 1.1rem;
     }
     .phantom-foot-nav button:hover { background: rgba(255,255,255,0.06); }
     .phantom-foot-nav .active { color: #8cffdb; }
@@ -739,7 +678,7 @@
       width: min(420px, 92vw);
       max-height: 80vh;
       overflow: auto;
-      background: #1c1c1e;
+      background: #080a16;
       border: 1px solid rgba(255,255,255,0.14);
       border-radius: 14px;
       padding: 14px;
@@ -781,8 +720,8 @@
             <button class="mini-btn" id="btn-back-to-landing">Back</button>
           </div>
           <div class="wallet-actions">
-            <button class="pill pill-solid" id="btn-signup-phone">Verify with one time code <span title="Phone verification currently unavailable in USA/CA" aria-label="info" style="margin-left:6px; cursor:help; color:#b38cff;">?</span></button>
-            <button class="pill" id="btn-signup-phone-pass">Register with password</button>
+            <button class="pill pill-solid" id="btn-signup-phone">Register with phone <span title="Phone verification currently unavailable in USA/CA" aria-label="info" style="margin-left:6px; cursor:help;">?</span></button>
+            <button class="pill" id="btn-signup-username">Register with username</button>
           </div>
         </div>
 
@@ -804,20 +743,20 @@
           </div>
         </div>
 
-        <div class="wallet-section" id="auth-signup-phone-pass" style="display:none;">
+        <div class="wallet-section" id="auth-signup-username" style="display:none;">
           <div class="section-heading" style="justify-content:space-between;">
-            <div class="section-title">Sign up with phone + password</div>
-            <button class="mini-btn" id="btn-back-to-signup-3">Back</button>
+            <div class="section-title">Sign up with username</div>
+            <button class="mini-btn" id="btn-back-to-signup-2">Back</button>
           </div>
-          <div class="wallet-form" id="phonepass-signup-form">
-            <label>Phone
-              <input id="sp-phone" placeholder="+1234567890" />
+          <div class="wallet-form" id="username-signup-form">
+            <label>Username
+              <input id="su-username" placeholder="username" />
             </label>
             <label>Password
-              <input id="sp-password" type="password" placeholder="Enter password" />
+              <input id="su-password" type="password" placeholder="Enter password" />
             </label>
-            <button class="pill pill-solid" id="btn-phonepass-register">Create account</button>
-            <div class="wallet-status" id="phonepass-signup-status"></div>
+            <button class="pill pill-solid" id="btn-username-register">Create account</button>
+            <div class="wallet-status" id="username-signup-status"></div>
           </div>
         </div>
 
@@ -827,20 +766,10 @@
             <button class="mini-btn" id="btn-back-to-landing-2">Back</button>
           </div>
           <div class="wallet-actions">
-            <button class="pill pill-solid" id="btn-login-phonepass">Password Authentication</button>
-            <button class="pill" id="btn-login-otp">OTP Authentication</button>
+            <button class="pill pill-solid" id="btn-login-otp">Login with phone</button>
+            <button class="pill" id="btn-login-username">Login with username</button>
           </div>
-          <div class="wallet-form" id="login-phonepass-form" style="display:none;">
-            <label>Phone
-              <input id="lp-phone" placeholder="+1234567890" />
-            </label>
-            <label>Password
-              <input id="lp-password" type="password" placeholder="Password" />
-            </label>
-            <button class="pill pill-solid" id="btn-login-phonepass-submit">Login</button>
-            <div class="wallet-status" id="login-phonepass-status">Use your phone number and password.</div>
-          </div>
-          <div class="wallet-form" id="login-otp-form" style="display:none;">
+          <div class="wallet-form" id="login-otp-form">
             <label>Phone
               <input id="lo-phone" placeholder="+1234567890" />
             </label>
@@ -850,6 +779,16 @@
               <button class="pill pill-solid" id="lo-submit">Verify</button>
             </div>
             <div class="wallet-status" id="login-otp-status">Request and verify OTP to login.</div>
+          </div>
+          <div class="wallet-form" id="login-username-form" style="display:none;">
+            <label>Username
+              <input id="lu-username" placeholder="username" />
+            </label>
+            <label>Password
+              <input id="lu-password" type="password" placeholder="Password" />
+            </label>
+            <button class="pill pill-solid" id="btn-login-username-submit">Login</button>
+            <div class="wallet-status" id="login-username-status"></div>
           </div>
         </div>
       </div>
@@ -875,7 +814,6 @@
                 <button class="pill pill-solid" id="wallet-onboarding-confirm">I stored the key</button>
               </div>
               <button class="pill" id="wallet-onboarding-import">Import existing wallet</button>
-              <button class="mini-btn" id="wallet-onboarding-back">Back to login</button>
               <div class="wallet-status" id="wallet-onboarding-status"></div>
             </div>
           </div>
@@ -884,7 +822,7 @@
             <div class="wallet-phantom">
               <div class="phantom-top">
                 <div class="phantom-id">
-                  <div class="phantom-avatar"><img src="divineicon.png" alt="Divine icon"></div>
+                  <div class="phantom-avatar">⚡</div>
                   <div class="phantom-id-text">
                     <div class="phantom-title">Main Wallet</div>
                     <div class="phantom-address-row">
@@ -895,22 +833,25 @@
                   </div>
                 </div>
                 <div class="phantom-actions">
+                  <button class="icon-btn" id="btn-refresh-balance" title="Refresh">⟳</button>
                   <button class="icon-btn" id="btn-settings" title="Settings">⚙</button>
                 </div>
               </div>
 
               <div class="phantom-balance-card">
                 <div class="phantom-balance-value" id="wallet-balance-main">--.-- SOL</div>
-                <div class="phantom-balance-sub" id="balance-note">&nbsp;</div>
+                <div class="phantom-balance-sub" id="balance-note">Tap refresh to update.</div>
               </div>
 
               <div class="phantom-actions-grid">
                 <button class="phantom-action pill-solid" id="btn-show-qr-hero"><span class="icon">↓</span><span>Receive</span></button>
                 <button class="phantom-action" id="btn-send-shortcut"><span class="icon">↑</span><span>Send</span></button>
-                <button class="phantom-action phantom-action-muted" aria-disabled="true"><span class="icon">$</span><span>Buy</span></button>
+                <button class="phantom-action phantom-action-muted" aria-disabled="true"><span class="icon">⇄</span><span>Swap</span></button>
+                <button class="phantom-action phantom-action-muted" aria-disabled="true"><span class="icon">🛒</span><span>Buy</span></button>
               </div>
 
               <div class="phantom-manage">
+                <button class="pill" id="btn-import-wallet">Import</button>
                 <button class="pill" id="btn-settings">Settings</button>
                 <button class="pill" id="btn-logout">Logout</button>
               </div>
@@ -934,19 +875,19 @@
               <div class="qr-box" id="qr-box" style="display:none;">
                 <img id="qr-img" alt="QR code" style="width:160px;height:160px;object-fit:contain;" />
                 <div class="status" id="qr-status"></div>
-                <button class="mini-btn" id="btn-hide-qr">Hide</button>
               </div>
 
               <div class="phantom-foot-nav">
                 <button id="nav-home" class="active" aria-label="Home">⌂</button>
                 <button id="nav-history" aria-label="History">⟳</button>
+                <button id="nav-actions" aria-label="Actions">✚</button>
                 <button id="nav-settings" aria-label="Settings">⚙</button>
-                <button id="nav-more" aria-label="Contacts">👤</button>
+                <button id="nav-more" aria-label="More">⋯</button>
               </div>
 
               <div class="empty-state" id="wallet-empty">
                 <div class="empty-title">Create your wallet</div>
-                <div class="empty-desc">Use Generate wallet or Settings → Import to get started.</div>
+                <div class="empty-desc">Generate or import a wallet to continue.</div>
               </div>
               <div class="wallet-form" id="import-form" style="display:none;">
                 <label>Secret key (base58)
@@ -962,10 +903,7 @@
           </div>
 
           <div class="wallet-tabs-panel" id="tab-tokens">
-            <div class="section-heading">
-              <div class="section-title">Tokens (demo)</div>
-              <button class="mini-btn wallet-home-btn">Home</button>
-            </div>
+            <div class="section-title">Tokens (demo)</div>
             <div class="token-list">
               <div class="token-row">
                 <h4>SOL</h4>
@@ -975,10 +913,7 @@
           </div>
 
           <div class="wallet-tabs-panel" id="tab-send">
-            <div class="section-heading">
-              <div class="section-title">Send (demo transfer)</div>
-              <button class="mini-btn wallet-home-btn">Home</button>
-            </div>
+            <div class="section-title">Send (demo transfer)</div>
             <div class="wallet-form">
               <label>Recipient phone (E.164)
                 <input id="send-phone" placeholder="+1234567890" />
@@ -1000,10 +935,7 @@
           <div class="wallet-tabs-panel" id="tab-contacts">
             <div class="section-heading">
               <div class="section-title">Contacts</div>
-              <div class="section-actions">
-                <button class="mini-btn wallet-home-btn">Home</button>
-                <button class="mini-btn" id="btn-add-contact">Add</button>
-              </div>
+              <button class="mini-btn" id="btn-add-contact">Add</button>
             </div>
             <div class="contact-list" id="contact-list"></div>
             <div class="wallet-form" id="contact-form" style="display:none;">
@@ -1016,9 +948,6 @@
               <label>Address
                 <input id="contact-address" placeholder="Destination address (optional)" />
               </label>
-              <label>Color (optional)
-                <input id="contact-color" type="color" value="#7e77d2" />
-              </label>
               <div class="inline-row">
                 <button class="pill pill-solid" id="contact-save">Save contact</button>
                 <button class="pill" id="contact-cancel">Cancel</button>
@@ -1027,10 +956,7 @@
           </div>
 
           <div class="wallet-tabs-panel" id="tab-settings">
-            <div class="section-heading">
-              <div class="section-title">Settings</div>
-              <button class="mini-btn wallet-home-btn">Home</button>
-            </div>
+            <div class="section-title">Settings</div>
             <div class="wallet-card" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08);">
               <div class="section-heading">
                 <div class="section-title">Private key</div>
@@ -1044,14 +970,6 @@
                   <button class="mini-btn" id="btn-copy-secret">Copy</button>
                 </div>
               </div>
-            </div>
-
-            <div class="wallet-card" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08);">
-              <div class="section-heading">
-                <div class="section-title">Import wallet</div>
-                <div class="wallet-label">Restore using a base58 secret key</div>
-              </div>
-              <button class="pill" id="btn-import-settings">Start import</button>
             </div>
 
             <div class="wallet-card" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08);">
@@ -1180,33 +1098,33 @@
     const authLanding = document.getElementById('auth-landing');
     const authSignupChoice = document.getElementById('auth-signup-choice');
     const authSignupPhone = document.getElementById('auth-signup-phone');
-    const authSignupPhonePass = document.getElementById('auth-signup-phone-pass');
+    const authSignupUsername = document.getElementById('auth-signup-username');
     const authLogin = document.getElementById('auth-login');
     const btnAuthSignup = document.getElementById('btn-auth-signup');
     const btnAuthLogin = document.getElementById('btn-auth-login');
     const btnSignupPhone = document.getElementById('btn-signup-phone');
-    const btnSignupPhonePass = document.getElementById('btn-signup-phone-pass');
+    const btnSignupUsername = document.getElementById('btn-signup-username');
     const btnBackToLanding = document.getElementById('btn-back-to-landing');
     const btnBackToLanding2 = document.getElementById('btn-back-to-landing-2');
     const btnBackToSignup = document.getElementById('btn-back-to-signup');
-    const btnBackToSignup3 = document.getElementById('btn-back-to-signup-3');
+    const btnBackToSignup2 = document.getElementById('btn-back-to-signup-2');
     const btnLoginOtp = document.getElementById('btn-login-otp');
-    const btnLoginPhonepass = document.getElementById('btn-login-phonepass');
+    const btnLoginUsername = document.getElementById('btn-login-username');
     const loginOtpForm = document.getElementById('login-otp-form');
-    const loginPhonepassForm = document.getElementById('login-phonepass-form');
+    const loginUsernameForm = document.getElementById('login-username-form');
     const loPhone = document.getElementById('lo-phone');
     const loOtp = document.getElementById('lo-otp');
     const loRequestOtp = document.getElementById('lo-request-otp');
     const loSubmit = document.getElementById('lo-submit');
     const loginOtpStatus = document.getElementById('login-otp-status');
-    const lpPhone = document.getElementById('lp-phone');
-    const lpPassword = document.getElementById('lp-password');
-    const btnLoginPhonepassSubmit = document.getElementById('btn-login-phonepass-submit');
-    const loginPhonepassStatus = document.getElementById('login-phonepass-status');
-    const spPhone = document.getElementById('sp-phone');
-    const spPassword = document.getElementById('sp-password');
-    const btnPhonepassRegister = document.getElementById('btn-phonepass-register');
-    const phonepassSignupStatus = document.getElementById('phonepass-signup-status');
+    const luUsername = document.getElementById('lu-username');
+    const luPassword = document.getElementById('lu-password');
+    const btnLoginUsernameSubmit = document.getElementById('btn-login-username-submit');
+    const loginUsernameStatus = document.getElementById('login-username-status');
+    const suUsername = document.getElementById('su-username');
+    const suPassword = document.getElementById('su-password');
+    const btnUsernameRegister = document.getElementById('btn-username-register');
+    const usernameSignupStatus = document.getElementById('username-signup-status');
     const dragHandle = document.getElementById('wallet-drag');
     const walletAuthView = document.getElementById('wallet-auth');
     const walletAppView = document.getElementById('wallet-app');
@@ -1219,37 +1137,8 @@
     const btnLinkRequestOtp = document.getElementById('btn-link-request-otp');
     const btnLinkSave = document.getElementById('btn-link-save');
     const settingsStatus = document.getElementById('settings-status');
-
-    const OTP_COOLDOWN_MS = 30000;
-    let otpCooldownUntil = 0;
-    let otpCooldownTimer = null;
-    const otpButtons = [requestOtpBtn, loRequestOtp, btnLinkRequestOtp];
-
-    const setOtpButtonsEnabled = (enabled) => {
-      otpButtons.forEach((btn) => {
-        if (!btn) return;
-        btn.disabled = !enabled;
-        btn.style.opacity = enabled ? '1' : '0.6';
-        btn.style.pointerEvents = enabled ? 'auto' : 'none';
-      });
-    };
-
-    const isOtpCoolingDown = () => otpCooldownUntil && Date.now() < otpCooldownUntil;
-
-    const startOtpCooldown = () => {
-      otpCooldownUntil = Date.now() + OTP_COOLDOWN_MS;
-      setOtpButtonsEnabled(false);
-      if (otpCooldownTimer) clearInterval(otpCooldownTimer);
-      otpCooldownTimer = setInterval(() => {
-        if (!isOtpCoolingDown()) {
-          clearInterval(otpCooldownTimer);
-          otpCooldownTimer = null;
-          setOtpButtonsEnabled(true);
-        }
-      }, 500);
-    };
     const btnLogout = document.getElementById('btn-logout');
-    const btnImport = document.getElementById('btn-import-settings');
+    const btnImport = document.getElementById('btn-import-wallet');
     const importForm = document.getElementById('import-form');
     const importSecret = document.getElementById('import-secret');
     const importSubmit = document.getElementById('import-submit');
@@ -1259,10 +1148,10 @@
     const btnCopyAddress = document.getElementById('btn-copy-address');
     const btnShowQr = document.getElementById('btn-show-qr');
     const btnShowQrHero = document.getElementById('btn-show-qr-hero');
-    const btnHideQr = document.getElementById('btn-hide-qr');
     const qrBox = document.getElementById('qr-box');
     const qrImg = document.getElementById('qr-img');
     const qrStatus = document.getElementById('qr-status');
+    const btnRefreshBalance = document.getElementById('btn-refresh-balance');
     const btnSendShortcut = document.getElementById('btn-send-shortcut');
     const sendPhone = document.getElementById('send-phone');
     const sendTo = document.getElementById('send-to');
@@ -1275,7 +1164,6 @@
     const contactName = document.getElementById('contact-name');
     const contactPhone = document.getElementById('contact-phone');
     const contactAddress = document.getElementById('contact-address');
-    const contactColor = document.getElementById('contact-color');
     const contactSave = document.getElementById('contact-save');
     const contactCancel = document.getElementById('contact-cancel');
     const contactList = document.getElementById('contact-list');
@@ -1293,7 +1181,6 @@
     const onboardingConfirm = document.getElementById('wallet-onboarding-confirm');
     const onboardingStatus = document.getElementById('wallet-onboarding-status');
     const onboardingImport = document.getElementById('wallet-onboarding-import');
-    const onboardingBack = document.getElementById('wallet-onboarding-back');
     const balanceMain = document.getElementById('wallet-balance-main');
     const tokenSolPrimary = document.getElementById('token-sol');
     const tokenSolTab = document.getElementById('token-sol-tab');
@@ -1313,16 +1200,16 @@
     const btnWalletHome = document.getElementById('btn-wallet-home');
     const navHome = document.getElementById('nav-home');
     const navHistory = document.getElementById('nav-history');
+    const navActions = document.getElementById('nav-actions');
     const navSettings = document.getElementById('nav-settings');
     const navMore = document.getElementById('nav-more');
-    const homeButtons = Array.from(document.querySelectorAll('.wallet-home-btn'));
     const dragState = { active: false, offsetX: 0, offsetY: 0 };
     const resizeState = { active: false, startX: 0, startY: 0, startW: 0, startH: 0 };
 
     const STORAGE_KEY = 'divine_wallet_v1';
     const TOKEN_KEY = 'divine_token';
-    const HELIUS_SECURE_HTTP = 'https://mainnet.helius-rpc.com/?api-key=2d2e5586-e4d3-430a-849c-3b9645304662';
-    const HELIUS_SECURE_WS = 'wss://mainnet.helius-rpc.com/?api-key=2d2e5586-e4d3-430a-849c-3b9645304662';
+    const HELIUS_SECURE_HTTP = 'https://ellissa-ugxni5-fast-mainnet.helius-rpc.com';
+    const HELIUS_SECURE_WS = 'wss://ellissa-ugxni5-fast-mainnet.helius-rpc.com';
 
     let authenticated = false;
     let state = loadState();
@@ -1335,7 +1222,6 @@
     let onboardingTempKeypair = null;
     let onboardingTempSecret = '';
     let onboardingBypass = false;
-    let onboardingPrompted = false;
 
     function loadState() {
       try {
@@ -1460,7 +1346,6 @@
       state.wallet = null;
       state.balance = 0;
       onboardingBypass = false;
-      onboardingPrompted = false;
       saveState();
       return true;
     };
@@ -1481,8 +1366,7 @@
 
     const updateOnboardingVisibility = () => {
       if (!onboarding) return;
-      const shouldHide = !authenticated || !onboardingPrompted;
-      if (shouldHide) {
+      if (!authenticated) {
         onboarding.style.display = 'none';
         resetOnboardingSecretStep(true);
         return;
@@ -1555,7 +1439,6 @@
       walletAuthView.style.display = isAuth ? 'grid' : 'none';
       walletAppView.style.display = !isAuth ? 'grid' : 'none';
       if (isAuth) {
-        onboardingPrompted = false;
         resetOnboardingSecretStep(true);
         if (onboarding) onboarding.style.display = 'none';
       } else {
@@ -1576,35 +1459,12 @@
       }
       state.contacts.forEach((c) => {
         const btn = document.createElement('button');
-        btn.className = 'contact-chip';
+        btn.className = 'tag';
+        btn.textContent = `${c.name}`;
         btn.title = c.phone || c.address || '';
-
-        const avatar = document.createElement('div');
-        avatar.className = 'contact-avatar';
-        avatar.style.background = c.color || '#7e77d2';
-        avatar.textContent = (c.name || '?').trim().slice(0, 1).toUpperCase();
-
-        const meta = document.createElement('div');
-        meta.className = 'contact-meta';
-        const nameEl = document.createElement('div');
-        nameEl.className = 'contact-name';
-        nameEl.textContent = c.name || 'Unnamed';
-        const subEl = document.createElement('div');
-        subEl.className = 'contact-sub';
-        subEl.textContent = c.phone || c.address || '';
-        meta.appendChild(nameEl);
-        meta.appendChild(subEl);
-
-        btn.appendChild(avatar);
-        btn.appendChild(meta);
-
         btn.addEventListener('click', () => {
           if (sendPhone) sendPhone.value = c.phone || '';
           if (sendTo) sendTo.value = c.address || '';
-          setPageMode(true);
-          setActiveTab('send');
-          if (contactForm) contactForm.style.display = 'none';
-          if (sendStatus) setStatus(sendStatus, 'Prefilled from contact.', '');
         });
         contactList.appendChild(btn);
       });
@@ -1612,8 +1472,8 @@
 
     const truncateAddress = (addr) => {
       if (!addr) return 'No wallet yet';
-      if (addr.length <= 12) return addr;
-      return `${addr.slice(0, 4)}...${addr.slice(-4)}`;
+      if (addr.length <= 10) return addr;
+      return `${addr.slice(0, 2)}...${addr.slice(-4)}`;
     };
 
     const renderWallet = () => {
@@ -1630,23 +1490,16 @@
         else tokenSolNote.textContent = '';
       }
       if (balanceNote) {
-          if (!hasWallet) balanceNote.textContent = 'Create or import a wallet to load SOL.';
-          else if (!hasSecret) balanceNote.textContent = 'View-only mode · Import secret to sign.';
-          else balanceNote.textContent = '';
-        }
+        if (!hasWallet) balanceNote.textContent = 'Create or import a wallet to load SOL.';
+        else if (!hasSecret) balanceNote.textContent = 'View-only mode · Import secret to sign.';
+        else balanceNote.textContent = 'Tap refresh to update.';
+      }
 
       const address = state.wallet?.pub;
-      const truncatedAddress = truncateAddress(address);
-      if (currentAddressEl) {
-        currentAddressEl.textContent = truncatedAddress;
-        currentAddressEl.title = address || 'No wallet yet';
-        currentAddressEl.dataset.fullAddress = address || '';
-        currentAddressEl.classList.toggle('empty', !address);
-      }
+      if (currentAddressEl) currentAddressEl.textContent = address || 'No wallet yet.';
       if (walletAddressTop) {
-        walletAddressTop.textContent = truncatedAddress;
+        walletAddressTop.textContent = truncateAddress(address);
         walletAddressTop.title = address || 'No wallet yet';
-        walletAddressTop.dataset.fullAddress = address || '';
         walletAddressTop.classList.toggle('empty', !address);
       }
       if (qrBox) qrBox.style.display = 'none';
@@ -1733,7 +1586,7 @@
       startResize(e);
     });
 
-    const authSections = [authLanding, authSignupChoice, authSignupPhone, authSignupPhonePass, authLogin];
+    const authSections = [authLanding, authSignupChoice, authSignupPhone, authSignupUsername, authLogin];
 
     const showAuthStage = (stage) => {
       authSections.forEach((el) => el && (el.style.display = 'none'));
@@ -1744,12 +1597,12 @@
         case 'signup-phone':
           authSignupPhone.style.display = 'grid';
           break;
-        case 'signup-phone-pass':
-          authSignupPhonePass.style.display = 'grid';
+        case 'signup-username':
+          authSignupUsername.style.display = 'grid';
           break;
         case 'login':
           authLogin.style.display = 'grid';
-          toggleLoginMode('');
+          toggleLoginMode('otp');
           break;
         default:
           authLanding.style.display = 'grid';
@@ -1758,21 +1611,21 @@
 
     const toggleLoginMode = (mode) => {
       if (loginOtpForm) loginOtpForm.style.display = mode === 'otp' ? 'grid' : 'none';
-      if (loginPhonepassForm) loginPhonepassForm.style.display = mode === 'phonepass' ? 'grid' : 'none';
+      if (loginUsernameForm) loginUsernameForm.style.display = mode === 'username' ? 'grid' : 'none';
       btnLoginOtp?.classList.toggle('pill-solid', mode === 'otp');
-      btnLoginPhonepass?.classList.toggle('pill-solid', mode === 'phonepass');
+      btnLoginUsername?.classList.toggle('pill-solid', mode === 'username');
     };
 
     btnAuthSignup?.addEventListener('click', () => showAuthStage('signup-choice'));
     btnAuthLogin?.addEventListener('click', () => showAuthStage('login'));
     btnSignupPhone?.addEventListener('click', () => showAuthStage('signup-phone'));
-    btnSignupPhonePass?.addEventListener('click', () => showAuthStage('signup-phone-pass'));
+    btnSignupUsername?.addEventListener('click', () => showAuthStage('signup-username'));
     btnBackToLanding?.addEventListener('click', () => showAuthStage('landing'));
     btnBackToLanding2?.addEventListener('click', () => showAuthStage('landing'));
     btnBackToSignup?.addEventListener('click', () => showAuthStage('signup-choice'));
-    btnBackToSignup3?.addEventListener('click', () => showAuthStage('signup-choice'));
+    btnBackToSignup2?.addEventListener('click', () => showAuthStage('signup-choice'));
     btnLoginOtp?.addEventListener('click', () => toggleLoginMode('otp'));
-    btnLoginPhonepass?.addEventListener('click', () => toggleLoginMode('phonepass'));
+    btnLoginUsername?.addEventListener('click', () => toggleLoginMode('username'));
 
     const loadAddresses = async () => {
       try {
@@ -1794,12 +1647,7 @@
     const loadContacts = async () => {
       try {
         const res = await api('/contacts', { auth: true });
-        const serverContacts = res.contacts || [];
-        const localColorMap = new Map((state.contacts || []).map((c) => [c.phone, c.color]));
-        state.contacts = serverContacts.map((c) => ({
-          ...c,
-          color: localColorMap.get(c.phone) || c.color
-        }));
+        state.contacts = res.contacts || [];
         saveState();
         renderContacts();
       } catch (err) {
@@ -1819,10 +1667,7 @@
           const restored = ensureWalletFromAddresses();
           toggleView('app');
           renderWallet();
-          const hasWallet = !!state.wallet?.pub;
-          onboardingPrompted = !hasWallet;
-          updateOnboardingVisibility();
-          if (hasWallet) {
+          if (state.wallet?.pub) {
             if (restored && !state.wallet?.sec && actionStatus) {
               setStatus(actionStatus, 'Wallet restored · import secret key to sign.', 'error');
             }
@@ -1837,13 +1682,9 @@
         } catch (err) {
           localStorage.removeItem(TOKEN_KEY);
           authenticated = false;
-          onboardingPrompted = false;
-          updateOnboardingVisibility();
         }
       }
       authenticated = false;
-      onboardingPrompted = false;
-      updateOnboardingVisibility();
       toggleView('auth');
     };
 
@@ -1921,7 +1762,6 @@
     const setWallet = async (kp, secretBase58) => {
       state.wallet = { pub: kp.publicKey.toBase58(), sec: secretBase58 };
       onboardingBypass = false;
-      onboardingPrompted = false;
       saveState();
       secretRevealed = false;
       if (secretValue) secretValue.value = 'Hidden — tap reveal';
@@ -2053,20 +1893,27 @@
       }, 30000);
     };
 
-    const finishAuth = async (token, statusTarget, successMessage) => {
-      localStorage.setItem(TOKEN_KEY, token);
+    const requestOtp = async (phone, statusTarget) => {
+      if (!phone) return setStatus(statusTarget, 'Enter phone first.', 'error');
+      setStatus(statusTarget, 'Requesting OTP...');
+      await api('/auth/request-otp', { method: 'POST', body: JSON.stringify({ phone }) });
+      setStatus(statusTarget, 'OTP sent. Check your phone.', 'success');
+    };
+
+    const verifyOtpAndLogin = async (phone, code, statusTarget) => {
+      if (!phone || !code) return setStatus(statusTarget, 'Phone and OTP are required.', 'error');
+      setStatus(statusTarget, 'Verifying...');
+      const data = await api('/auth/verify-otp', { method: 'POST', body: JSON.stringify({ phone, code }) });
+      localStorage.setItem(TOKEN_KEY, data.token);
       authenticated = true;
       onboardingBypass = false;
       await loadAddresses();
       await loadContacts();
-      setStatus(statusTarget, successMessage, 'success');
+      setStatus(statusTarget, 'Verified. Token saved.', 'success');
       toggleView('app');
       const restored = ensureWalletFromAddresses();
       renderWallet();
-      const hasWallet = !!state.wallet?.pub;
-      onboardingPrompted = !hasWallet;
-      updateOnboardingVisibility();
-      if (hasWallet) {
+      if (state.wallet?.pub) {
         if (restored && !state.wallet?.sec && actionStatus) {
           setStatus(actionStatus, 'Wallet restored · import secret key to sign.', 'error');
         }
@@ -2076,25 +1923,6 @@
       } else if (actionStatus) {
         setStatus(actionStatus, 'Create or import a wallet to begin.', 'error');
       }
-    };
-
-    const requestOtp = async (phone, statusTarget) => {
-      if (isOtpCoolingDown()) {
-        const secs = Math.ceil((otpCooldownUntil - Date.now()) / 1000);
-        return setStatus(statusTarget, `Please wait ${secs}s before requesting another code.`, 'error');
-      }
-      if (!phone) return setStatus(statusTarget, 'Enter phone first.', 'error');
-      setStatus(statusTarget, 'Requesting OTP...');
-      await api('/auth/request-otp', { method: 'POST', body: JSON.stringify({ phone }) });
-      setStatus(statusTarget, 'OTP sent. Check your phone.', 'success');
-      startOtpCooldown();
-    };
-
-    const verifyOtpAndLogin = async (phone, code, statusTarget) => {
-      if (!phone || !code) return setStatus(statusTarget, 'Phone and OTP are required.', 'error');
-      setStatus(statusTarget, 'Verifying...');
-      const data = await api('/auth/verify-otp', { method: 'POST', body: JSON.stringify({ phone, code }) });
-      await finishAuth(data.token, statusTarget, 'Verified. Token saved.');
     };
 
     requestOtpBtn?.addEventListener('click', async () => {
@@ -2130,7 +1958,7 @@
       }
     });
 
-    const performLogout = (message = 'Logged out.') => {
+    btnLogout?.addEventListener('click', () => {
       authenticated = false;
       localStorage.removeItem(TOKEN_KEY);
       if (balanceInterval) {
@@ -2139,27 +1967,8 @@
       }
       teardownBalanceSubscription();
       onboardingBypass = false;
-      onboardingPrompted = false;
-      secretRevealed = false;
-      if (secretValue) secretValue.value = state.wallet?.sec ? 'Hidden — tap reveal' : '';
-      if (btnRevealSecret) btnRevealSecret.textContent = 'Reveal';
-      if (statusEl) setStatus(statusEl, message, '');
+      setStatus(statusEl, 'Logged out.', '');
       toggleView('auth');
-      showAuthStage('landing');
-      if (onboarding) onboarding.style.display = 'none';
-      updateOnboardingVisibility();
-      if (phoneInput) phoneInput.value = '';
-      if (otpInput) otpInput.value = '';
-      if (loPhone) loPhone.value = '';
-      if (loOtp) loOtp.value = '';
-      if (suUsername) suUsername.value = '';
-      if (suPassword) suPassword.value = '';
-      if (luUsername) luUsername.value = '';
-      if (luPassword) luPassword.value = '';
-    };
-
-    btnLogout?.addEventListener('click', () => {
-      performLogout('Logged out.');
     });
 
     onboardingGenerate?.addEventListener('click', async () => {
@@ -2201,45 +2010,76 @@
     onboardingImport?.addEventListener('click', () => {
       if (onboarding) onboarding.style.display = 'none';
       onboardingBypass = true;
-      onboardingPrompted = false;
       resetOnboardingSecretStep(true);
       if (importForm) importForm.style.display = 'grid';
       if (importSecret) importSecret.value = '';
       setStatus(actionStatus, 'Paste a base58 secret to import.');
     });
 
-    onboardingBack?.addEventListener('click', () => {
-      performLogout('Choose sign up or log in.');
-    });
-
-    const handlePhonePassSignup = async () => {
-      const phone = spPhone?.value.trim();
-      const password = spPassword?.value.trim();
-      if (!phone || !password) return setStatus(phonepassSignupStatus, 'Phone and password required.', 'error');
+    const handleUsernameSignup = async () => {
+      const username = suUsername?.value.trim();
+      const password = suPassword?.value.trim();
+      if (!username || !password) return setStatus(usernameSignupStatus, 'Username and password required.', 'error');
       try {
-        setStatus(phonepassSignupStatus, 'Creating account...');
-        const data = await api('/auth/register-password', { method: 'POST', body: JSON.stringify({ phone, password }) });
-        await finishAuth(data.token, phonepassSignupStatus, 'Account created. Logged in.');
+        setStatus(usernameSignupStatus, 'Creating account...');
+        const data = await api('/auth/register-username', { method: 'POST', body: JSON.stringify({ username, password }) });
+        localStorage.setItem(TOKEN_KEY, data.token);
+        authenticated = true;
+        onboardingBypass = false;
+        await loadAddresses();
+        await loadContacts();
+        setStatus(usernameSignupStatus, 'Account created. Logged in.', 'success');
+        toggleView('app');
+        const restored = ensureWalletFromAddresses();
+        renderWallet();
+        if (state.wallet?.pub) {
+          if (restored && !state.wallet?.sec && actionStatus) {
+            setStatus(actionStatus, 'Wallet restored · import secret key to sign.', 'error');
+          }
+          await refreshBalance();
+          startBalancePolling();
+          await subscribeBalance(state.wallet?.pub);
+        } else if (actionStatus) {
+          setStatus(actionStatus, 'Create or import a wallet to begin.', 'error');
+        }
       } catch (err) {
-        setStatus(phonepassSignupStatus, 'Signup failed: ' + err.message, 'error');
+        setStatus(usernameSignupStatus, 'Signup failed: ' + err.message, 'error');
       }
     };
 
-    const handlePhonePassLogin = async () => {
-      const phone = lpPhone?.value.trim();
-      const password = lpPassword?.value.trim();
-      if (!phone || !password) return setStatus(loginPhonepassStatus, 'Phone and password required.', 'error');
+    const handleUsernameLogin = async () => {
+      const username = luUsername?.value.trim();
+      const password = luPassword?.value.trim();
+      if (!username || !password) return setStatus(loginUsernameStatus, 'Username and password required.', 'error');
       try {
-        setStatus(loginPhonepassStatus, 'Signing in...');
-        const data = await api('/auth/login-password', { method: 'POST', body: JSON.stringify({ phone, password }) });
-        await finishAuth(data.token, loginPhonepassStatus, 'Logged in.');
+        setStatus(loginUsernameStatus, 'Signing in...');
+        const data = await api('/auth/login-username', { method: 'POST', body: JSON.stringify({ username, password }) });
+        localStorage.setItem(TOKEN_KEY, data.token);
+        authenticated = true;
+        onboardingBypass = false;
+        await loadAddresses();
+        await loadContacts();
+        setStatus(loginUsernameStatus, 'Logged in.', 'success');
+        toggleView('app');
+        const restored = ensureWalletFromAddresses();
+        renderWallet();
+        if (state.wallet?.pub) {
+          if (restored && !state.wallet?.sec && actionStatus) {
+            setStatus(actionStatus, 'Wallet restored · import secret key to sign.', 'error');
+          }
+          await refreshBalance();
+          startBalancePolling();
+          await subscribeBalance(state.wallet?.pub);
+        } else if (actionStatus) {
+          setStatus(actionStatus, 'Create or import a wallet to begin.', 'error');
+        }
       } catch (err) {
-        setStatus(loginPhonepassStatus, 'Login failed: ' + err.message, 'error');
+        setStatus(loginUsernameStatus, 'Login failed: ' + err.message, 'error');
       }
     };
 
-    btnPhonepassRegister?.addEventListener('click', handlePhonePassSignup);
-    btnLoginPhonepassSubmit?.addEventListener('click', handlePhonePassLogin);
+    btnUsernameRegister?.addEventListener('click', handleUsernameSignup);
+    btnLoginUsernameSubmit?.addEventListener('click', handleUsernameLogin);
 
     const showMainWallet = () => {
       setCollapsed(false);
@@ -2248,12 +2088,10 @@
     };
 
     btnImport?.addEventListener('click', () => {
-      showMainWallet();
       if (importForm) importForm.style.display = 'grid';
-      if (importSecret) importSecret.value = '';
+      importSecret.value = '';
       setStatus(actionStatus, 'Paste a base58 secret to import.');
       onboardingBypass = true;
-      onboardingPrompted = false;
       updateOnboardingVisibility();
     });
 
@@ -2261,7 +2099,6 @@
       if (importForm) importForm.style.display = 'none';
       setStatus(actionStatus, 'Import canceled.');
       onboardingBypass = false;
-      onboardingPrompted = !state.wallet?.pub;
       updateOnboardingVisibility();
     });
 
@@ -2281,7 +2118,7 @@
       }
     });
 
-    const copyWalletAddress = async () => {
+    btnCopyAddress?.addEventListener('click', async () => {
       const addr = state.wallet?.pub;
       if (!addr) return setStatus(actionStatus, 'No wallet yet.', 'error');
       try {
@@ -2290,11 +2127,7 @@
       } catch (err) {
         setStatus(actionStatus, 'Copy failed: ' + err.message, 'error');
       }
-    };
-
-    btnCopyAddress?.addEventListener('click', copyWalletAddress);
-    currentAddressEl?.addEventListener('click', copyWalletAddress);
-    walletAddressTop?.addEventListener('click', copyWalletAddress);
+    });
 
     btnShowQr?.addEventListener('click', () => {
       const addr = state.wallet?.pub;
@@ -2302,10 +2135,6 @@
       if (qrImg) qrImg.src = 'https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=' + encodeURIComponent(addr);
       if (qrBox) qrBox.style.display = 'grid';
       if (qrStatus) qrStatus.textContent = 'Scan to receive';
-    });
-
-    btnHideQr?.addEventListener('click', () => {
-      if (qrBox) qrBox.style.display = 'none';
     });
 
     btnShowQrHero?.addEventListener('click', () => {
@@ -2317,18 +2146,17 @@
       setActiveTab('send');
     });
 
+    btnRefreshBalance?.addEventListener('click', () => {
+      refreshBalance();
+    });
+
     btnLinkRequestOtp?.addEventListener('click', async () => {
       const phone = linkPhoneInput?.value.trim();
       if (!phone) return setStatus(settingsStatus, 'Enter phone first.', 'error');
       try {
-        if (isOtpCoolingDown()) {
-          const secs = Math.ceil((otpCooldownUntil - Date.now()) / 1000);
-          return setStatus(settingsStatus, `Please wait ${secs}s before requesting another code.`, 'error');
-        }
         setStatus(settingsStatus, 'Requesting code...');
         await api('/auth/request-otp', { method: 'POST', body: JSON.stringify({ phone }) });
         setStatus(settingsStatus, 'OTP sent.', 'success');
-        startOtpCooldown();
       } catch (err) {
         setStatus(settingsStatus, 'OTP failed: ' + err.message, 'error');
       }
@@ -2430,6 +2258,17 @@
       }
     });
 
+    walletAddressTop?.addEventListener('click', async () => {
+      const addr = state.wallet?.pub;
+      if (!addr) return;
+      try {
+        await navigator.clipboard.writeText(addr);
+        setStatus(actionStatus, 'Address copied.', 'success');
+      } catch (err) {
+        setStatus(actionStatus, 'Copy failed: ' + err.message, 'error');
+      }
+    });
+
     btnSettings?.addEventListener('click', () => {
       setPageMode(true);
       setActiveTab('settings');
@@ -2448,23 +2287,14 @@
 
     navHome?.addEventListener('click', () => setActiveTab('overview'));
     navHistory?.addEventListener('click', () => setActiveTab('tokens'));
+    navActions?.addEventListener('click', () => setActiveTab('send'));
     navSettings?.addEventListener('click', () => setActiveTab('settings'));
     navMore?.addEventListener('click', () => setActiveTab('contacts'));
-
-    homeButtons.forEach((btn) => {
-      btn.addEventListener('click', () => {
-        setPageMode(false);
-        setActiveTab('overview');
-        if (importForm) importForm.style.display = 'none';
-        if (contactForm) contactForm.style.display = 'none';
-      });
-    });
 
     contactSave?.addEventListener('click', () => {
       const name = contactName.value.trim();
       const phone = contactPhone.value.trim();
       const address = contactAddress.value.trim();
-      const color = (contactColor?.value || '').trim();
       if (!name || !phone) return setStatus(actionStatus, 'Name and phone are required.', 'error');
       const saveLocal = (contact) => {
         state.contacts = state.contacts || [];
@@ -2473,13 +2303,11 @@
         saveState();
         renderContacts();
       };
-      const contactPayload = { name, phone, address: address || undefined, color: color || undefined };
+      const contactPayload = { name, phone, address: address || undefined };
       if (authenticated) {
         api('/contacts', { method: 'POST', auth: true, body: JSON.stringify(contactPayload) })
           .then((res) => {
-            const incoming = res.contact || contactPayload;
-            if (contactPayload.color && !incoming.color) incoming.color = contactPayload.color;
-            saveLocal(incoming);
+            saveLocal(res.contact || contactPayload);
             setStatus(actionStatus, 'Contact saved.', 'success');
           })
           .catch((err) => setStatus(actionStatus, 'Save failed: ' + err.message, 'error'))
