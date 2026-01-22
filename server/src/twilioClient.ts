@@ -7,7 +7,7 @@ export function makeTwilioClient() {
 }
 
 export async function sendOtpSms(client: twilio.Twilio, to: string, code: string) {
-  const body = `Your Divine Solana verification code is ${code}`;
+  const body = `Your Dash Network verification code is ${code}`;
   await client.messages.create({
     to,
     from: config.twilio.fromNumber,
